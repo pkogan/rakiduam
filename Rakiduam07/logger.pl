@@ -1,10 +1,13 @@
-:- module(logger,[iniciarLog/2,escribirLog/3], []).
+:- module(logger,[iniciarLog/2,escribirLog/3,agregar_comentario/1], []).
+:- data [comentario/1].
 %main:-
 %	iniciarLog('test',Stream),
 %	estado(Estado),
 %	display(Stream,'hola').
 %  	escribirLog(Stream,Estado).
 
+agregar_comentario(Comentario):-
+	assertz_fact(comentario(Comentario)).
 
 iniciarLog(NombreArchivo,Stream):-
 	open(NombreArchivo,write,Stream).
@@ -14,16 +17,24 @@ escribirLog(Stream,[Pelota,Jugadores,_Estado],ListaVelocidades):-
 	escribir_jugadores(Stream,Jugadores),
 	escribir_pelota(Stream,Pelota),
 	display(Stream,'# COMENTARIOS:'),
+	escribir_comentarios(Stream),
 	escribir_lista(Stream,ListaVelocidades,0),nl(Stream), 
 	!.
-	
+
+escribir_comentarios(Stream):-
+	comentario(Comentario),
+	display(Stream,Comentario),
+	retract_fact(comentario(Comentario)),
+	escribir_comentarios(Stream).
+escribir_comentarios(_).
+
 escribir_lista(_,[],_).
 escribir_lista(Stream,[Iz1|[De1|Cola]],NumeroJugador):-
 	display(Stream,'TXT$[  ('),
 	display(Stream,Iz1),
 	display(Stream,','),
 	display(Stream,De1),
-	display(Stream,']'),
+	display(Stream,')]'),
 	display(Stream,NumeroJugador),
 	display(Stream,'['),
 	ProximoJugador is NumeroJugador+1,
