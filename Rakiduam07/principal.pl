@@ -1,4 +1,5 @@
 :- module(principal, [main/0], [assertions]).
+
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 :- use_module(library(concurrency)).
