@@ -26,7 +26,7 @@
 %% módulo de conexión con el servidor de comandos
 :- use_module(primitivas).
 %% módulo para gestión de logs
-%:- use_module(logger).
+:- use_module(logger).
 %% modulo para gestion de datos de ambiente
 :- use_module(ambiente).
 :- comment(title, "Modulo estrategia").
@@ -67,9 +67,9 @@ estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
 %***************************asignación roles
 asignacion_rol('kiñe','arquero').
 asignacion_rol('epu','jugador').
-asignacion_rol('küla','pateador').
-asignacion_rol('meli','jugadorgira').
-asignacion_rol('kechu','jugadorapunta').
+asignacion_rol('küla','nada').
+asignacion_rol('meli','nada').
+asignacion_rol('kechu','nada').
 %****************************asignación robots
 asignacion_robot('kiñe',robot('propio',1,Pos)):-
 	jugador(robot('propio',1,Pos)).
@@ -89,7 +89,7 @@ comportamiento(Jugador,Iz,De):-
 	asignacion_robot(Jugador,Robot),
 	accion(Rol,Robot,Iz,De).
 
- 
+accion('nada',_,0,0).
 
 accion('arquero',Robot,Vi,Vd):-
 	arco_propio(X1,Y1,_X2,Y2),
@@ -120,47 +120,41 @@ accion('arquero',Robot,Vi,Vd):-
 %  	%avanzar(robot('propio',2,Pos),Iz,De).
 
 
-accion('pateador',robot('propio',_Num,pos(A,B,_C,Angle)),Iz,De):-
-	tiene_pelota(robot('propio',_Number,pos(A,B,_C,Angle))),
+accion('pateador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De):-
+	tiene_pelota(robot('propio',Num,pos(A,B,_C,Angle))),
 	A >= 7,
 	A =< 25,
 	B >= 29, 
 	B =< 55,
- 	patear(robot('propio',_Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
+ 	patear(robot('propio',Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
 
-accion('pateador',robot('propio',_Num,pos(A,B,_C,Angle)),Iz,De) :-
-  	ir_a_posicion(robot('propio',_Num,pos(A,B,_C,Angle)),20,30,Iz,De).
+accion('pateador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
+	accion_prev(Num,Vi,Vd),
+	agregar_comentario(Vi),agregar_comentario(Vd),
+  	ir_a_posicion_y_apuntar(robot('propio',Num,pos(A,B,_C,Angle)),45,20,30,Iz,De).
 
-accion('jugador',robot('propio',_Num,pos(A,B,_C,Angle)),Iz,De):-
-	tiene_pelota(robot('propio',_Number,pos(A,B,_C,Angle))),
-	A >= 7,
-	A =< 25,
-	B >= 29, 
-	B =< 55,
- 	patear(robot('propio',_Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
 	
-accion('jugador',robot('propio',_Num,pos(A,B,_C,Angle)),Iz,De):-
-	tiene_pelota(robot('propio',_Number,pos(A,B,_C,Angle))),
-	llevar_pelota_to_arco(robot('propio',_Number,pos(A,B,_C,Angle)),Iz,De).
+accion('jugador',Robot,Iz,De):-
+	llevar_pelota_a_posicion(Robot,6,42,Iz,De).
 	%patear(robot('propio',_Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
 
 
-accion('jugador',robot('propio',_Num,pos(A,B,_C,Angle)),Iz,De) :-
-  	pelota_pred(X,Y,_),
+%accion('jugador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
+%  	pelota_pred(X,Y,_),
 %	pelota(Xball,Yball,_),
 %	display('pelota predecida: '), display(X),display(' '),display(Y), nl,
 %	display('pelota: '), display(Xball), display(' '), display(Yball), nl,
 	%robot('propio',Num,pos(A,B,C,Angle)) is Robot,
 %	display('robot: '), display(_Num), display(' : '), display(A), display(' '), display(B), display(' '), 
 %	display(Angle), nl,
-  	ir_a_posicion(robot('propio',_Num,pos(A,B,_C,Angle)),X,Y,Iz,De).
+%  	ir_a_posicion(robot('propio',Num,pos(A,B,_C,Angle)),X,Y,Iz,De).
  	%avanzar(robot('propio',2,Pos),Iz,De).
 
 
 
 accion('jugadorgira',R,Vi,Vd):-	
-	ir_a_posicion_y_apuntar(R,21,43,90,Vi,Vd).
-%	gira(Vi,Vd,50,'to_right',50).
+%	ir_a_posicion_y_apuntar(R,21,43,90,Vi,Vd).
+	gira(Vi,Vd,50,'to_right',50).
 
 accion('jugadorapunta',Robot,Vi,Vd):-
 	medio_cancha(X,Y),

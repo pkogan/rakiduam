@@ -18,9 +18,9 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %:- module(primitivas, [patear_pelota_a_posicion/5,llevar_pelota_a_posicion/5,acompannar_a_lleva_pelota/5,acompannar_a_lleva_pelota2/5,acompannar_a_lleva_pelota_pres/5,acompannar_a_lleva_pelota_def/5,esperar_pelota_en_posicion/7,desbloquear/3,ir_a_posicion_segura/5,ir_a_posicion_segura_pres/5,ir_a_posicion_insegura/5,ir_a_posicion_precisa/5,ir_a_posicion/8,gira/5,goto_position/5,avanzar/3,distancia_entre_puntos/4], [assertions]).
-:- module(primitivas,[ir_a_posicion/5,gira/5,resolver/4,patear/6,tiene_pelota/1,llevar_pelota_to_arco/3,ir_a_posicion_y_apuntar/6,calcular_angulo/4], [assertions]).
+:- module(primitivas,[ir_a_posicion/5,gira/5,resolver/4,patear/6,tiene_pelota/1,llevar_pelota_to_arco/3,ir_a_posicion_y_apuntar/6,calcular_angulo/4,llevar_pelota_a_posicion/5], [assertions]).
 :- use_module(ambiente).
-
+:- use_module(logger).
 
 :- comment(title, "Modulo primitivas").
 
@@ -30,6 +30,46 @@
 
 
 :- comment(doinclude,ir_a_posicion/5).
+
+%pelota_pred2(5,5,5).
+llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
+	%DVer is 3.7, %Ver DVer
+	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
+	AVer is 30, %Ver ángulo Diferencia angular 
+	pelota_pred(Xball,Yball,_),
+	Dy_Ball_Dest is Yd-Yball,
+	Dx_Ball_Dest is Xd-Xball,
+	Dy_Robot_Ball is Yball-Yr,
+	Dx_Robot_Ball is Xball-Xr,
+	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
+	display(Ang_Ball_Dest),nl,
+	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
+	display(Ang_Robot_Ball),
+	Ang_Dif is abs(Ang_Ball_Dest-Ang_Robot_Ball),
+	Ang_Dif<AVer,
+	display('ir_a_posicion'),
+	ir_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd).
+	
+ llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
+	DVer is 3.7, %Ver DVer
+	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
+	AVer is 30, %Ver ángulo Diferencia angular 
+	pelota_pred(Xball,Yball,_),
+	Dy_Ball_Dest is Yd-Yball,
+	Dx_Ball_Dest is Xd-Xball,
+	Dy_Robot_Ball is Yball-Yr,
+	Dx_Robot_Ball is Xball-Xr,
+	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
+	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
+	Ang_Dif is abs(Ang_Ball_Dest-Ang_Robot_Ball),
+	Ang_Dif>=AVer,
+	Ang_Pelota_Nuevo_Destino is Ang_Ball_Dest-180,
+    Dy=sin((3.14/180)*Ang_Pelota_Nuevo_Destino)*DVer,
+	Dx=cos((3.14/180)*Ang_Pelota_Nuevo_Destino)*DVer,
+	YNuevo is Yball+Dy,
+	XNuevo is Xball+Dx,
+	display('ir_a_posicion_y_apuntar'),	
+	ir_a_posicion_y_apuntar(robot(E,J,pos(Xr,Yr,_,Rr)),XNuevo,YNuevo,Ang_Robot_Ball,Vi,Vd).
 
 calcular_angulo(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)),Xp,Yp, Angulo) :-
 	Dx is Xp-Xr,
@@ -44,12 +84,23 @@ apuntar_a_posicion(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)),Xp,Yp, Vi,Vd) :-
 	
 	
 
-ir_a_posicion_y_apuntar(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,Angulo,Vi,Vd) :-
+ir_a_posicion_y_apuntar(robot('propio',Number,pos(Xr,Yr,_Z,_Rr)), X,Y,Angulo,Vi,Vd) :-
 	Dx is X-Xr,
 	Dy is Y-Yr,
 	Distancia is sqrt(Dx**2 + Dy**2), % pitáagoras distancia al objetivo (X,Y)
 	distancia_cero(Distancia),
+	accion_prev(Number,0,0),
+	agregar_comentario('Apuntando '),agregar_comentario(Number),
 	apuntar(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)),Angulo,Vi,Vd).
+
+ir_a_posicion_y_apuntar(robot('propio',Number,pos(Xr,Yr,_Z,_Rr)), X,Y,_Angulo,Vi,Vd) :-
+	Dx is X-Xr,
+	Dy is Y-Yr,
+	Distancia is sqrt(Dx**2 + Dy**2), % pitáagoras distancia al objetivo (X,Y)
+	distancia_cero(Distancia),
+	\+(accion_prev(Number,0,0)),
+	detener(Vi,Vd),
+		agregar_comentario('Deteniendo '),agregar_comentario(Number).
 
 ir_a_posicion_y_apuntar(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,_Angulo,Vi,Vd) :-
 	Dx is X-Xr,
@@ -57,7 +108,8 @@ ir_a_posicion_y_apuntar(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,_Angulo,V
 	Distancia is sqrt(Dx**2 + Dy**2), % pitáagoras distancia al objetivo (X,Y)
 	\+(distancia_cero(Distancia)),
 	ir_a_posicion(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)),X,Y,Vi,Vd).
-			 
+
+detener(0,0).			 
 apuntar(robot('propio',_Number,pos(_Xr,_Yr,_Z,Rr)), Angulo,0,0) :-
 	diferencia_angular(Angulo, Rr, Diferencia),	
 	error_angular(0, Error),
@@ -74,7 +126,7 @@ diferencia_angular(Alfa, Beta, Diferencia):-
 	ajuste_angulo(Aux, Diferencia),!.
 
 distancia_cero(Distancia):-
-	Distancia =< (1).
+	Distancia =< (2).
 
 
 ir_a_posicion(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,0,0) :-
@@ -202,14 +254,16 @@ resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 	gira(Vi,Vd,PotenciaDeGiro,'to_left',Diferencial).
 %-------------------------------------
 
-calcular_potencia(Distancia,10) :-
-	Distancia =< 4.2.
-
-calcular_potencia(Distancia,50) :-
-	Distancia =< 10.
-
-calcular_potencia(Distancia,100) :-
-	Distancia > 10.
+calcular_potencia(_Distancia,100).
+	
+%	calcular_potencia(Distancia,10) :-
+%		Distancia =< 4.2.
+%	
+%	calcular_potencia(Distancia,50) :-
+%		Distancia =< 10.
+%	
+%	calcular_potencia(Distancia,100) :-
+%		Distancia > 10.
 	
 
 %voy para adelante
@@ -263,15 +317,15 @@ resolver(Theta_e2,D_e,Vi,Vd):-
 
 
 %Ver Casos especiales que evitan divición por 0
-%atan2(Dy,0,90):-Dy>0.
-%atan2(Dy,0,-90).
+atan2(Dy,0,90):-Dy>0.
+atan2(Dy,0,-90):-Dy=<0.
 
 atan2(Dy,Dx,X):- %segundo cuadrante
 	Dx < 0, Dy >0, X is truncate(180/3.14 * atan(Dy/Dx)+180).
 atan2(Dy,Dx,X):- %tercer cuadrante
 	Dx < 0, Dy < 0, X is truncate(180/3.14 * atan(Dy/Dx)-180).	
 atan2(Dy,Dx,X):- %primero y cuarto cuadrante se dejan como estan
-	 X is truncate(180/3.14 * atan(Dy/Dx)).
+	 Dx>0, X is truncate(180/3.14 * atan(Dy/Dx)).
 
 %ajusta el ángulo T en T2 para que este dentro del rango [-180,180]
 
@@ -279,10 +333,12 @@ ajuste_angulo(T,T2):-
 	T =< 180,
 	ajuste_angulo2(T,T2).
 ajuste_angulo(T,T2):-
+	T >180,
 	T3 is T - 360,
 	ajuste_angulo(T3,T2).
 ajuste_angulo2(T,T):- (T > -180).
 ajuste_angulo2(T,T2):-
+	T =< 180,
 	T3 is T + 360,
 	ajuste_angulo2(T3,T2).
 

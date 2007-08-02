@@ -435,7 +435,7 @@ accion_prev(X,Vi,Vd):-
 	seleccion(Acciones,X,Vi,Vd).
 
 seleccion([Vi|[Vd|_R]],1,Vi,Vd).
-seleccion([],_,0,0).
+%seleccion([],_,0,0).
 seleccion([_Vi|[_Vd|R]],X,Vi,Vd):-
 	X1 is X-1,
 	seleccion(R,X1,Vi,Vd).
