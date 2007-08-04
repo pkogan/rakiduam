@@ -134,9 +134,11 @@ accion('pateador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
   	ir_a_posicion_y_apuntar(robot('propio',Num,pos(A,B,_C,Angle)),45,20,30,Iz,De).
 
 	
-accion('jugador',Robot,Iz,De):-
+accion('jugador',Robot,Iz,De):- 
 	llevar_pelota_a_posicion(Robot,6,42,Iz,De).
 	%patear(robot('propio',_Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
+%	pelota_pred(X,Y,_),
+%	ir_a_posicion(Robot,X,Y,Iz,De).
 
 
 %accion('jugador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
@@ -152,7 +154,7 @@ accion('jugador',Robot,Iz,De):-
 
 
 
-accion('jugadorgira',R,Vi,Vd):-	
+accion('jugadorgira',_R,Vi,Vd):-	
 %	ir_a_posicion_y_apuntar(R,21,43,90,Vi,Vd).
 	gira(Vi,Vd,50,'to_right',50).
 
