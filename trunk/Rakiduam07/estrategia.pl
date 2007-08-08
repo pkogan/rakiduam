@@ -67,9 +67,9 @@ estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
 %***************************asignación roles
 asignacion_rol('kiñe','arquero').
 asignacion_rol('epu','jugador').
-asignacion_rol('küla','nada').
-asignacion_rol('meli','nada').
-asignacion_rol('kechu','nada').
+asignacion_rol('küla','jugador').
+asignacion_rol('meli','jugador').
+asignacion_rol('kechu','jugador').
 %****************************asignación robots
 asignacion_robot('kiñe',robot('propio',1,Pos)):-
 	jugador(robot('propio',1,Pos)).
@@ -96,7 +96,7 @@ accion('arquero',Robot,Vi,Vd):-
 	pelota_pred(_Xp,Yp,_),
 	Yp=<Y2, Yp>=Y1,
 	ir_a_posicion_y_apuntar(Robot,X1,Yp,90,Vi,Vd).
-accion('arquero',Robot,Vi,Vd):-
+accion('arquero',Robot,Vi,Vd):-		
 	arco_propio(X1,_Y1,_X2,Y2),
 	pelota_pred(_Xp,Yp,_),
 	Yp>Y2,
