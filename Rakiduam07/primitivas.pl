@@ -31,70 +31,70 @@
 
 :- comment(doinclude,ir_a_posicion/5).
 
-llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
-	%DVer is 5, %Ver DVer
-	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
-	%Ver ángulo Diferencia angular 
-	pelota_pred(Xball,Yball,_),
-	Dy_Ball_Dest is Yd-Yball,
-	Dx_Ball_Dest is Xd-Xball,
-	Dy_Robot_Ball is Yball-Yr,
-	Dx_Robot_Ball is Xball-Xr,
-	Distancia is sqrt(Dx_Robot_Ball**2 + Dy_Robot_Ball**2),
-	error_angular(Distancia,Error_Angular),
-	%Error_Angular is 10,
-	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
-	%display(Ang_Ball_Dest),nl,
-	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
-	%display(Ang_Robot_Ball),
-	diferencia_angular(Ang_Ball_Dest,Ang_Robot_Ball,Diferencia_Angular_Posicion),
-	Ang_Dif is abs(Diferencia_Angular_Posicion),
-	agregar_comentario('Distancia:'),
-	agregar_comentario(Distancia),
-	agregar_comentario(' por dif poscion = '),
-	agregar_comentario(Ang_Dif),
-	agregar_comentario('Angulos'),agregar_comentario(' '),
-	agregar_comentario(Ang_Ball_Dest),agregar_comentario(' '),
-	agregar_comentario(Ang_Robot_Ball),agregar_comentario(' '),
-	agregar_comentario(Rr),agregar_comentario(' '),
-	diferencia_angular(Ang_Ball_Dest,Rr,Diferencia_Angular_Angulo),
-	Ang_Dif_Angulo is abs(Diferencia_Angular_Angulo),	
-	agregar_comentario('por dif angulo= '),
-	agregar_comentario(Ang_Dif_Angulo),
-	Ang_Dif<Error_Angular,
-	%Distancia<DVer,
-	(Ang_Dif_Angulo<Error_Angular; (180-Ang_Dif_Angulo)< Error_Angular),
-	agregar_comentario('ir_a_posicion por derecho'),
-	ir_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xball,Yball,Vi,Vd).
-
-
-%pelota_pred2(5,5,5).
-llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
-	DVer is 3.7, %Ver DVer
-	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
-	%Ver ángulo Diferencia angular 
-	pelota_pred(Xball,Yball,_),
-	Dy_Ball_Dest is Yd-Yball,
-	Dx_Ball_Dest is Xd-Xball,
-	Dy_Robot_Ball is Yball-Yr,
-	Dx_Robot_Ball is Xball-Xr,
-	Distancia is sqrt(Dx_Robot_Ball**2 + Dy_Robot_Ball**2),
-	%error_angular(Distancia,Error_Angular),
-	Error_Angular is 30,
-	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
-	%display(Ang_Ball_Dest),nl,
-	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
-	%display(Ang_Robot_Ball),
-	diferencia_angular(Ang_Ball_Dest,Ang_Robot_Ball,Diferencia_Angular_Posicion),
-	Ang_Dif is abs(Diferencia_Angular_Posicion),
-	diferencia_angular(Ang_Ball_Dest,Rr,Diferencia_Angular_Angulo),
-	Ang_Dif_Angulo is abs(Diferencia_Angular_Angulo),	
-	%Ang_Dif<Error_Angular,
-	Distancia<DVer,
-	Ang_Dif<Error_Angular,
-	(Ang_Dif_Angulo<Error_Angular; (180-Ang_Dif_Angulo)< Error_Angular),
-	agregar_comentario('ir_a_posicion por cercano  '),
-	ir_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xball,Yball,Vi,Vd).
+%llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
+%	%DVer is 5, %Ver DVer
+%	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
+%	%Ver ángulo Diferencia angular 
+%	pelota_pred(Xball,Yball,_),
+%	Dy_Ball_Dest is Yd-Yball,
+%	Dx_Ball_Dest is Xd-Xball,
+%	Dy_Robot_Ball is Yball-Yr,
+%	Dx_Robot_Ball is Xball-Xr,
+%	Distancia is sqrt(Dx_Robot_Ball**2 + Dy_Robot_Ball**2),
+%	error_angular(Distancia,Error_Angular),
+%	%Error_Angular is 10,
+%	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
+%	%display(Ang_Ball_Dest),nl,
+%	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
+%	%display(Ang_Robot_Ball),
+%	diferencia_angular(Ang_Ball_Dest,Ang_Robot_Ball,Diferencia_Angular_Posicion),
+%	Ang_Dif is abs(Diferencia_Angular_Posicion),
+%	agregar_comentario('Distancia:'),
+%	agregar_comentario(Distancia),
+%	agregar_comentario(' por dif poscion = '),
+%	agregar_comentario(Ang_Dif),
+%	agregar_comentario('Angulos'),agregar_comentario(' '),
+%	agregar_comentario(Ang_Ball_Dest),agregar_comentario(' '),
+%	agregar_comentario(Ang_Robot_Ball),agregar_comentario(' '),
+%	agregar_comentario(Rr),agregar_comentario(' '),
+%	diferencia_angular(Ang_Ball_Dest,Rr,Diferencia_Angular_Angulo),
+%	Ang_Dif_Angulo is abs(Diferencia_Angular_Angulo),	
+%	agregar_comentario('por dif angulo= '),
+%	agregar_comentario(Ang_Dif_Angulo),
+%	Ang_Dif<Error_Angular,
+%	%Distancia<DVer,
+%	(Ang_Dif_Angulo<Error_Angular; (180-Ang_Dif_Angulo)< Error_Angular),
+%	agregar_comentario('ir_a_posicion por derecho'),
+%	ir_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xball,Yball,Vi,Vd).
+%
+%
+%%pelota_pred2(5,5,5).
+%llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
+%	DVer is 3.7, %Ver DVer
+%	%DDest is 2.4, % Distancia a la pelota, desde el punto que se dirige el agente para llevar la pelota hacia el destino
+%	%Ver ángulo Diferencia angular 
+%	pelota_pred(Xball,Yball,_),
+%	Dy_Ball_Dest is Yd-Yball,
+%	Dx_Ball_Dest is Xd-Xball,
+%	Dy_Robot_Ball is Yball-Yr,
+%	Dx_Robot_Ball is Xball-Xr,
+%	Distancia is sqrt(Dx_Robot_Ball**2 + Dy_Robot_Ball**2),
+%	%error_angular(Distancia,Error_Angular),
+%	Error_Angular is 30,
+%	atan2(Dy_Ball_Dest,Dx_Ball_Dest,Ang_Ball_Dest),
+%	%display(Ang_Ball_Dest),nl,
+%	atan2(Dy_Robot_Ball,Dx_Robot_Ball,Ang_Robot_Ball),
+%	%display(Ang_Robot_Ball),
+%	diferencia_angular(Ang_Ball_Dest,Ang_Robot_Ball,Diferencia_Angular_Posicion),
+%	Ang_Dif is abs(Diferencia_Angular_Posicion),
+%	diferencia_angular(Ang_Ball_Dest,Rr,Diferencia_Angular_Angulo),
+%	Ang_Dif_Angulo is abs(Diferencia_Angular_Angulo),	
+%	%Ang_Dif<Error_Angular,
+%	Distancia<DVer,
+%	Ang_Dif<Error_Angular,
+%	(Ang_Dif_Angulo<Error_Angular; (180-Ang_Dif_Angulo)< Error_Angular),
+%	agregar_comentario('ir_a_posicion por cercano  '),
+%	ir_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xball,Yball,Vi,Vd).
 	
  llevar_pelota_a_posicion(robot(E,J,pos(Xr,Yr,_,Rr)),Xd,Yd,Vi,Vd):-
 	DVer is 2.4, %Ver DVer
