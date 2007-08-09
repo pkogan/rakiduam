@@ -89,77 +89,428 @@ comportamiento(Jugador,Iz,De):-
 	asignacion_robot(Jugador,Robot),
 	accion(Rol,Robot,Iz,De).
 
-accion('nada',_,0,0).
 
-accion('arquero',Robot,Vi,Vd):-
-	arco_propio(X1,Y1,_X2,Y2),
-	pelota_pred(_Xp,Yp,_),
-	Yp=<Y2, Yp>=Y1,
-	ir_a_posicion_y_apuntar(Robot,X1,Yp,90,Vi,Vd).
-accion('arquero',Robot,Vi,Vd):-		
-	arco_propio(X1,_Y1,_X2,Y2),
-	pelota_pred(_Xp,Yp,_),
-	Yp>Y2,
-	ir_a_posicion_y_apuntar(Robot,X1,Y2,90,Vi,Vd).	
-accion('arquero',Robot,Vi,Vd):-
-	arco_propio(X1,Y1,_X2,_Y2),
-	pelota_pred(_Xp,Yp,_),
-	Yp<Y1,
-	ir_a_posicion_y_apuntar(Robot,X1,Y1,90,Vi,Vd).	
+accion('arquero',Robot,Iz,De):-
+	atajar('arquero',Robot,Iz,De).
 
+accion('jugador',Robot,Iz,De):-
+	campo_propio(X1c,Y1c,X2c,Y2c),	pelota_entre(X1c,Y1c,X2c,Y2c),
+	brusco(Robot,Iz,De).
 
-% accion('jugador',Robot,Iz,De) :-
-%   	pelota_pred(X,Y,_),
-% 	pelota(Xball,Yball,_),
-% 	display('pelota predecida: '), display(X),display(' '),display(Y), nl,
-% 	display('pelota: '), display(Xball), display(' '), display(Yball), nl,
-% 	%robot('propio',Num,pos(A,B,C,Angle)) is Robot,
-% 	%display('robot: '), display( Num), display(' : '), display(A), display(' '), display(B), display(' '), 
-% 	%display(Angle), nl,
-%   	ir_a_posicion(Robot,X,Y,Iz,De).
-%  	%avanzar(robot('propio',2,Pos),Iz,De).
+accion('jugador',Robot,Iz,De):-
+	bandas(X1c,Y1c,X2c,Y2c),pelota_entre(X1c,Y1c,X2c,Y2c),
+	mas_cercanos(Robot,3),
+	%mas_cercanos(Robot,2),
+	brusco(Robot,Iz,De).
 
+accion('jugador',Robot,Iz,De):-
+	area_contraria(Xa1,Ya1,Xa2,Ya2),
+	pelota_entre(Xa1,Ya1,Xa2,Ya2),
+	mas_cercanos(Robot,3),
+	ataque_area(Robot,Iz,De).
 
-accion('pateador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De):-
-	tiene_pelota(robot('propio',Num,pos(A,B,_C,Angle))),
-	A >= 7,
-	A =< 25,
-	B >= 29, 
-	B =< 55,
- 	patear(robot('propio',Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
+accion('jugador',Robot,Iz,De):-
+%	campo_contrario(X1c,Y1c,X2c,Y2c),
+%	pelota_entre(X1c,Y1c,X2c,Y2c),
+	mas_cercanos(Robot,3),
+	ataque(Robot,Iz,De).
 
-accion('pateador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
-	accion_prev(Num,Vi,Vd),
-	agregar_comentario(Vi),agregar_comentario(Vd),
-  	ir_a_posicion_y_apuntar(robot('propio',Num,pos(A,B,_C,Angle)),45,20,30,Iz,De).
-
-	
-accion('jugador',Robot,Iz,De):- 
-	llevar_pelota_a_posicion(Robot,6,42,Iz,De).
-	%patear(robot('propio',_Num,pos(A,B,_C,Angle)), 'to_right', 100, _Angulo, Iz,De).
-%	pelota_pred(X,Y,_),
-%	ir_a_posicion(Robot,X,Y,Iz,De).
-
-
-%accion('jugador',robot('propio',Num,pos(A,B,_C,Angle)),Iz,De) :-
-%  	pelota_pred(X,Y,_),
-%	pelota(Xball,Yball,_),
-%	display('pelota predecida: '), display(X),display(' '),display(Y), nl,
-%	display('pelota: '), display(Xball), display(' '), display(Yball), nl,
-	%robot('propio',Num,pos(A,B,C,Angle)) is Robot,
-%	display('robot: '), display(_Num), display(' : '), display(A), display(' '), display(B), display(' '), 
-%	display(Angle), nl,
-%  	ir_a_posicion(robot('propio',Num,pos(A,B,_C,Angle)),X,Y,Iz,De).
- 	%avanzar(robot('propio',2,Pos),Iz,De).
-
-
-
-accion('jugadorgira',_R,Vi,Vd):-	
-%	ir_a_posicion_y_apuntar(R,21,43,90,Vi,Vd).
-	gira(Vi,Vd,50,'to_right',50).
-
-accion('jugadorapunta',Robot,Vi,Vd):-
+accion('jugador',Robot,Iz,De):-
 	medio_cancha(X,Y),
-	pelota_pred(Xp,Yp,_),
-	calcular_angulo(Robot,Xp,Yp,Angulo),
-	ir_a_posicion_y_apuntar(Robot,X,Y,Angulo,Vi,Vd).
+	mas_cercanos_lugar(Robot,1,X,Y),
+	pichero(Robot,Iz,De).
+
+accion('jugador',Robot,Iz,De):-
+	libero(Robot,Iz,De).
+
+
+% tratar el tema del not
+no(A):-A,!,fail.
+no(_).
+%****************************************
+%brusco es un comportamiento defensivo 
+brusco(Robot,Iz,De):-
+	%si no soy el mas cercano y esta atascado entonces desbloquear
+	(no(mas_cercano(Robot)),
+        atascado2(Robot);atascado(Robot)),!,
+	desbloquear(Robot,Iz,De).
+
+brusco(Robot,Iz,De):-	
+	%si esta en la zona del arquero entonces ir a la línea del área grande
+        area_chica_propia(Xa1,Ya1,Xa2,Ya2),
+	robot_entre(Robot,Xa1-4,Ya1-4,Xa2+4,Ya2+4),
+	pto_area(Robot,X,Y),
+	ir_a_posicion_insegura(Robot,X,Y,Iz,De). 
+	
+brusco(Robot,Iz,De):-	
+	%si la pelota entro en el área grande ir al eje area mas cercano 
+        area_propia(Xa1,Ya1,Xa2,Ya2),
+	pelota_entre(Xa1,Ya1,Xa2,Ya2),
+	eje_area_mas_cercano(Robot,X,Y),
+	ir_a_posicion_insegura(Robot,X,Y,Iz,De). 
+
+brusco(Robot,Iz,De):-  
+	%si está detraz de la pelota ir a la pelota
+	pelota_pred(Xb,Yb,_),
+	sentido(S),
+	cancha(X1,Y1,X2,Y2),
+	(S>0, %el caso de azul-
+	(Xb>90,X is Xb-S*2.5; X is Xb),
+	robot_entre(Robot,X,Y1,X2,Y2);
+	 S<0, %amarillo
+	(Xb<9,X is Xb-S*2.5; X is Xb),
+	robot_entre(Robot,X1,Y1,X,Y2)), 
+	ir_a_posicion_insegura(Robot,Xb,Yb,Iz,De).
+
+brusco(Robot,Iz,De):-
+	 % si no ir a posición defenciva
+	centro_arco_propio(X,Y),
+	acompannar_a_lleva_pelota_def(Robot,X,Y,Iz,De).
+
+
+%********************en ataque
+ataque_area(Robot,Iz,De):-
+	%si no soy el mas cercano y esta atascado entonces desbloquear
+	%(no(mas_cercano(Robot)),
+        atascado(Robot),
+	desbloquear(Robot,Iz,De).
+ataque_area(Robot,Iz,De):-	
+	%si esta en la zona del area chica contraria y no soy el mas cercano ir a la posición base
+	area_chica_contraria(Xa1,Ya1,Xa2,Ya2),
+	robot_entre(Robot,Xa1-2,Ya1-2,Xa2+2,Ya2+2),
+	centro_arco_contrario(X,Y),
+	(mas_cercano(Robot),
+	 patear_pelota_a_posicion(Robot,X,Y,Iz,De);
+	acompannar_a_lleva_pelota2(Robot,X,Y,Iz,De)).
+ataque_area(Robot,Iz,De):-
+	centro_arco_contrario(X,Y),
+	pelota_pred(Xb,Yb,_),
+	sentido(S),
+	robot_entre(Robot,Xb+S*3,Yb,X,Y),
+	acompannar_a_lleva_pelota(Robot,X,Y,Iz,De).
+ataque_area(Robot,Iz,De):-
+	centro_arco_contrario(Xo,Yo),
+	llevar_pelota_a_posicion(Robot,Xo,Yo,Iz,De).
+ataque(Robot,Iz,De):-
+	%si no soy el mas cercano y esta atascado entonces desbloquear
+	(no(mas_cercano(Robot)),
+        atascado2(Robot);atascado(Robot)),!,
+	%display('atascado '),display(Robot),nl,
+	desbloquear(Robot,Iz,De).
+
+ataque(Robot,Iz,De):-
+	 % si esta entre la pelota y el arco contrario irse lejos
+	%mas_cercano(Robot),
+	centro_arco_contrario(X,Y),
+	pelota_pred(Xb,Yb,_),
+	sentido(S),
+	robot_entre(Robot,Xb+S*3,Yb,X,Y),
+	acompannar_a_lleva_pelota2(Robot,X,Y,Iz,De).
+
+ataque(Robot,Iz,De):-
+	% si esta entre la pelota y el arco contrario irse lejos
+	mas_cercanos2(Robot),
+	centro_arco_contrario(Xo,Yo),
+	llevar_pelota_a_posicion(Robot,Xo,Yo,Iz,De).
+ataque(Robot,Iz,De):-
+        pelota_pred(Xb,Yb,_),
+	ir_a_posicion_insegura(Robot,Xb,Yb,Iz,De).
+	%patear_pelota_a_posicion(Robot,X,Y,Iz,De).
+
+ 
+
+%**************************************************************
+libero(Robot,Iz,De):-
+	%si no soy el mas cercano y esta atascado entonces desbloquear
+	(no(mas_cercano(Robot)),
+        atascado2(Robot);atascado(Robot)),!,
+	%display('atascado '),display(Robot),nl,
+	desbloquear(Robot,Iz,De).
+
+libero(Robot,Iz,De):-
+	%si esta en la zona del rol entonces llevar la pelota al objetivo
+	 centro_arco_contrario(X,Y),
+	 acompannar_a_lleva_pelota2(Robot,X,Y,Iz,De).
+
+
+
+pichero(Robot,Iz,De):-
+	%si no soy el mas cercano y esta atascado entonces desbloquear
+	%(no(mas_cercano(Robot)),
+        atascado(Robot),
+	desbloquear(Robot,Iz,De).
+%pichero(Robot,Iz,De):-
+	%si esta en la zona del rol entonces llevar la pelota al objetivo
+	%area_contraria(Xa1,Ya1,Xa2,Ya2),
+	%pelota_entre(Xa1-2,Ya1+4,Xa2+2,Ya2-4),
+	%mas_cercano(Robot),
+	%centro_arco_contrario(X,Y),patear_pelota_a_posicion(Robot,X,Y,Iz,De).
+%pichero(Robot,Iz,De):-
+	%si esta en la zona del rol entonces llevar la pelota al objetivo
+	%area1('pichero',Xa1,Ya1,Xa2,Ya2),
+	%pelota_entre(Xa1,Ya1,Xa2,Ya2),
+	%centro_arco_contrario(X,Y),llevar_pelota_a_posicion(Robot,X,Y,Iz,De).
+pichero(Robot,Iz,De):-
+	%si esta en dirección al area chica propia entonces esperar la pelota en el area
+	area1('pichero2',Xa1,Ya1,Xa2,Ya2),
+	pelota_en_direccion_a_zona(Xa1,Ya1,Xa2,Ya2,X,Y),
+	(robot_entre(Robot,X-2,Y-2,X+2,Y+2),Iz is 0,De is 0;
+	sentido(S),
+	ir_a_posicion_precisa(Robot,X,Y+S*2,Iz,De)).
+
+pichero(Robot,Iz,De):-
+	%caso contrario el comportamiento defecto es ir a la posición base del rol
+	pelota_pred(Xb,_Yb,_),
+	area1('pichero2',Xa1,Ya1,Xa2,Ya2),
+	sentido(S),
+	(Xb>Xa1,Xb<Xa2, X is Xb+S*2; Xb<Xa1, X is Xa1+S*2; X is Xa2+S*2),
+	Y is (Ya2-Ya1)/2+Ya1,
+	(robot_entre(Robot,X-2,Y-2,X+2,Y+2),Iz is 0,De is 0;
+	ir_a_posicion_precisa(Robot,X,Y,Iz,De)). %posición baseposición base,
+
+
+atajar(_Rol,Robot,Iz,De):-
+	%si esta atascado entonces desbloquear
+	atascado(Robot), %situación
+	desbloquear(Robot,Iz,De). %comportamiento
+
+atajar(Rol,Robot,Iz,De):-
+	%si esta en la zona del rol entonces llevar la pelota al objetivo
+	area_propia(Xa1,Ya1,Xa2,Ya2),
+%	sentido(S),
+	pelota_entre(Xa1,Ya1,Xa2,Ya2),
+	mas_cercano(Robot),
+	objetivo(Rol,X,Y),patear_pelota_a_posicion(Robot,X,Y,Iz,De).
+
+atajar(_Rol,Robot,Iz,De):-
+	%si esta en dirección al area chica propia entonces esperar la pelota en el area
+	area_chica_propia(Xa1,Ya1,Xa2,Ya2),
+	pelota_en_direccion_a_zona(Xa1,Ya1,Xa2,Ya2-3,X,Y),
+	(robot_entre(Robot,X-2,Y-2,X+2,Y+2),Iz is 0,De is 0;
+	ir_a_posicion_precisa(Robot,X,Y,Iz,De)).
+
+atajar(Rol,Robot,Iz,De):-
+	%caso contrario el comportamiento defecto es ir a la posición base del rol
+	pos_base(Rol,X,Y),
+	(robot_entre(Robot,X-2,Y-2,X+2,Y+2),Iz is 0,De is 0;
+	ir_a_posicion_precisa(Robot,X,Y,Iz,De)). %po25sición baseposición base,
+
+
+%***********************************************************datos para estrategia
+area1('pichero2',12.7,39,87.5,44).
+area1('pichero',17,33,82,51).
+bandas(6,6,93.5,9).
+bandas(6,74.5,93.5,78).
+eje_area_mas_cercano(robot(_,_,pos(Xr,Yr,_,_)),X,Y):-
+	sentido(S),
+	S<0, %amarillo
+	area_propia(_Xa1,Ya1,Xa2,Ya2),	
+	(sqrt((Xa2-Xr)**2+(Ya1-Yr)**2)<sqrt((Xa2-Xr)**2+(Ya2-Yr)**2),
+	Y is Ya1;Y is Ya2),
+	X is Xa2.
+eje_area_mas_cercano(robot(_,_,pos(Xr,Yr,_,_)),X,Y):-
+	sentido(S),S>0,
+	area_propia(Xa1,Ya1,_Xa2,Ya2),	
+	(sqrt((Xa1-Xr)**2+(Ya1-Yr)**2)<sqrt((Xa1-Xr)**2+(Ya2-Yr)**2),
+	Y is Ya1;Y is Ya2),
+	X is Xa1.
+%pto_area(robot(_,_,pos(_Xr,Y,_,_)),79,41).
+pto_area(robot(_,_,pos(_Xr,Yr,_,_)),X,Y):-
+	sentido(S),
+	S<0, %amarillo
+	area_propia(_Xa1,_Ya1,Xa2,_Ya2),	
+	Y is Yr+1,
+	X is Xa2.
+%linea_area_mas_cercano(robot(_,_,pos(_Xr,Yr,_,_)),79.6,Yr).
+pto_area(robot(_,_,pos(_Xr,Yr,_,_)),X,Y):-
+	sentido(S),
+	S>0,
+	area_propia(Xa1,_Ya1,_Xa2,_Ya2),	
+	Y is Yr+1,
+	X is Xa1.
+
+
+sentido(Signo):- %Signo =1 si es azul =-1 si es amarillo.
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L.
+
+centro_arco_propio(X,Y):-
+	arco_propio(X,Yp1,_Xp2,Yp2),
+	Y is Yp1 + (Yp2-Yp1)/2.
+campo_propio(X1,Y1,X2,Y2):-
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	(Signo >0, %azul
+	    cancha(_Xc1,Y1,X2,Y2),
+	    medio_cancha(X1,_Y1);
+	    Signo<0,
+	    cancha(X1,Y1,_X2,Y2),
+	    medio_cancha(X2,_Y1)).
+campo_contrario(X1,Y1,X2,Y2):-
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	(Signo <0, %amarillo
+	    cancha(_Xc1,Y1,X2,Y2),
+	    medio_cancha(X1,_Y1);
+	    Signo>0,
+	    cancha(X1,Y1,_X2,Y2),
+	    medio_cancha(X2,_Y1)).
+	 
+area_propia(X1,Y1,X2,Y2):-
+	centro_arco_propio(X,Y),
+	alto_area(A),
+	Y1 is Y - A/2, %alto del area/2
+	Y2 is Y + A/2,
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	ancho_area(An),
+	Xmedio is X-Signo*An/2, %ancho del area/2
+	X1 is Xmedio - An/2,
+	X2 is Xmedio + An/2.
+
+area_chica_propia(X1,Y1,X2,Y2):-
+	centro_arco_propio(X,Y),
+	alto_area_chica(A),
+	Y1 is Y - A/2, %alto del area/2
+	Y2 is Y + A/2,
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	ancho_area_chica(An),
+	Xmedio is X-Signo*An/2, %ancho del area/2
+	X1 is Xmedio - An/2,
+	X2 is Xmedio + An/2.
+%esta mal porque centro arco contrario es otro
+area_chica_contraria(X1,Y1,X2,Y2):-
+	centro_arco_contrario(_X,Y),
+	alto_area_chica(A),
+	Y1 is Y - A/2, %alto del area/2
+	Y2 is Y + A/2,
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	ancho_area_chica(An),
+	Xmedio is Xc1+Signo*An/2, %ancho del area/2
+	X1 is Xmedio - An/2,
+	X2 is Xmedio + An/2.
+
+%ver error
+area_contraria(X1,Y1,X2,Y2):-
+	centro_arco_contrario(_X,Y),
+	alto_area(La),
+	Y1 is Y - La/2, %alto del area/2
+	Y2 is Y + La/2,
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	ancho_area(A),
+	Xmedio is Xc1+(Signo*A/2), %ancho del area/2
+	X1 is Xmedio - A/2,
+	X2 is Xmedio + A/2.
+
+centro_arco_contrario(X,Y):-
+        largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,Yc1,_Xc2,Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	X is Xc1-Signo*2,
+	Y is Yc1 + (Yc2-Yc1)/2.	
+%posiciones de los roles de la estrategia
+
+pos_base('arquero',X,Y):-
+	pelota_pred(_Xb,Yb,_),
+	area_chica_propia(X1,Y1,X2,Y2),
+	largo_cancha(L),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+ 	(Signo<0,X is X1; X is X2),
+	(Y1<Yb,Yb<Y2,Y is Yb;
+	Y1>Yb,Y is Y1;
+	Y is Y2).
+pos_base('arquero',X,Y):-	centro_arco_propio(X,Y).
+ 
+pos_base('delantero_derecho',X,Y):-
+	largo_cancha(L),
+	ancho_cancha(A),
+	medio_cancha(_Xmc,Ymc),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	X is Xc1 + Signo*L/4,
+	Y is Ymc + Signo*A/4.
+pos_base('delantero_izquierdo',X,Y):-
+	largo_cancha(L),
+	ancho_cancha(A),
+	medio_cancha(_Xmc,Ymc),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	X is Xc1 + Signo*L/4,
+	Y is Ymc - Signo*A/4.
+pos_base('defensor_derecho',X,Y):-
+	largo_cancha(L),
+	ancho_cancha(A),
+	medio_cancha(_Xmc,Ymc),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	X is Xp1 - Signo*L/4,
+	Y is Ymc + Signo*A/4.
+pos_base('defensor_izquierdo',X,Y):-
+	largo_cancha(L),
+	ancho_cancha(A),
+	medio_cancha(_Xmc,Ymc),
+	arco_propio(Xp1,_Yp1,_Xp2,_Yp2),
+	arco_contrario(Xc1,_Yc1,_Xc2,_Yc2),
+	Signo is (Xp1 - Xc1)/L,
+	X is Xp1 - Signo*L/4,
+	Y is Ymc - Signo*A/4.
+area('arquero',X1,Y1,X2,Y2):-
+	area_propia(X1,Y1,X2,Y2).
+area('delantero_derecho',X1,Y1,X2,Y2):-
+	pos_base('delantero_derecho',X,Y),
+	largo_cancha(L),
+	ancho_cancha(A),
+	X1 is X - L/4,
+	Y1 is Y - A/4,
+	X2 is X + L/4,
+	Y2 is Y + A/4.
+area('delantero_izquierdo',X1,Y1,X2,Y2):-
+	pos_base('delantero_izquierdo',X,Y),
+	largo_cancha(L),
+	ancho_cancha(A),
+	X1 is X - L/4,
+	Y1 is Y - A/4,
+	X2 is X + L/4,
+	Y2 is Y + A/4.
+area('defensor_derecho',X1,Y1,X2,Y2):-
+	pos_base('defensor_derecho',X,Y),
+	largo_cancha(L),
+	ancho_cancha(A),
+	X1 is X - L/4,
+	Y1 is Y - A/4,
+	X2 is X + L/4,
+	Y2 is Y + A/4.
+area('defensor_izquierdo',X1,Y1,X2,Y2):-
+	pos_base('defensor_izquierdo',X,Y),
+	largo_cancha(L),
+	ancho_cancha(A),
+	X1 is X - L/4,
+	Y1 is Y - A/4,
+	X2 is X + L/4,
+	Y2 is Y + A/4.
+ 
+objetivo(_Rol,X,Y):- 
+	centro_arco_contrario(X,Y).
