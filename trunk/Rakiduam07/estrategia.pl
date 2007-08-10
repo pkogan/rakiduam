@@ -89,37 +89,46 @@ comportamiento(Jugador,Iz,De):-
 	asignacion_robot(Jugador,Robot),
 	accion(Rol,Robot,Iz,De).
 
-
+% El arquero se resuelve  con el predicado atajar
 accion('arquero',Robot,Iz,De):-
 	atajar('arquero',Robot,Iz,De).
 
+% El rol de jugador
+%si la pelota esta en el campo própio hace juego brusco
 accion('jugador',Robot,Iz,De):-
 	campo_propio(X1c,Y1c,X2c,Y2c),	pelota_entre(X1c,Y1c,X2c,Y2c),
 	brusco(Robot,Iz,De).
 
+%si la pelota esta en las bandas y el jugador esta entre los tres mas
+%cercanos hace juego brusco
 accion('jugador',Robot,Iz,De):-
 	bandas(X1c,Y1c,X2c,Y2c),pelota_entre(X1c,Y1c,X2c,Y2c),
 	mas_cercanos(Robot,3),
 	%mas_cercanos(Robot,2),
 	brusco(Robot,Iz,De).
 
+%si la pelota esta en el área contraria y el jugador esta entre los tres
+%mas cercanos realiza ataque_area
 accion('jugador',Robot,Iz,De):-
 	area_contraria(Xa1,Ya1,Xa2,Ya2),
 	pelota_entre(Xa1,Ya1,Xa2,Ya2),
 	mas_cercanos(Robot,3),
 	ataque_area(Robot,Iz,De).
 
+%si esta entre los tres más cercanos realiza ataque
 accion('jugador',Robot,Iz,De):-
 %	campo_contrario(X1c,Y1c,X2c,Y2c),
 %	pelota_entre(X1c,Y1c,X2c,Y2c),
 	mas_cercanos(Robot,3),
 	ataque(Robot,Iz,De).
 
+%si es el más cercano al centro de la cancha juega de pichero
 accion('jugador',Robot,Iz,De):-
 	medio_cancha(X,Y),
 	mas_cercanos_lugar(Robot,1,X,Y),
 	pichero(Robot,Iz,De).
 
+%en caso que no se cumpla ninguna de las anteriores juega de líbero
 accion('jugador',Robot,Iz,De):-
 	libero(Robot,Iz,De).
 
@@ -137,6 +146,7 @@ brusco(Robot,Iz,De):-
 
 brusco(Robot,Iz,De):-	
 	%si esta en la zona del arquero entonces ir a la línea del área grande
+	%para no hacer penal
         area_chica_propia(Xa1,Ya1,Xa2,Ya2),
 	robot_entre(Robot,Xa1-4,Ya1-4,Xa2+4,Ya2+4),
 	pto_area(Robot,X,Y),
@@ -144,6 +154,7 @@ brusco(Robot,Iz,De):-
 	
 brusco(Robot,Iz,De):-	
 	%si la pelota entro en el área grande ir al eje area mas cercano 
+	%para no hacer penal
         area_propia(Xa1,Ya1,Xa2,Ya2),
 	pelota_entre(Xa1,Ya1,Xa2,Ya2),
 	eje_area_mas_cercano(Robot,X,Y),
@@ -183,14 +194,19 @@ ataque_area(Robot,Iz,De):-
 	 patear_pelota_a_posicion(Robot,X,Y,Iz,De);
 	acompannar_a_lleva_pelota2(Robot,X,Y,Iz,De)).
 ataque_area(Robot,Iz,De):-
+	%si el robot esta entre la pelota y el arco contrario
+	%salir del lugar porque complica el gol
 	centro_arco_contrario(X,Y),
 	pelota_pred(Xb,Yb,_),
 	sentido(S),
 	robot_entre(Robot,Xb+S*3,Yb,X,Y),
 	acompannar_a_lleva_pelota(Robot,X,Y,Iz,De).
 ataque_area(Robot,Iz,De):-
+	%en caso contrario llevar pelota al arco contrario
 	centro_arco_contrario(Xo,Yo),
 	llevar_pelota_a_posicion(Robot,Xo,Yo,Iz,De).
+
+%**************************************************************	
 ataque(Robot,Iz,De):-
 	%si no soy el mas cercano y esta atascado entonces desbloquear
 	(no(mas_cercano(Robot)),
@@ -212,12 +228,12 @@ ataque(Robot,Iz,De):-
 	mas_cercanos2(Robot),
 	centro_arco_contrario(Xo,Yo),
 	llevar_pelota_a_posicion(Robot,Xo,Yo,Iz,De).
+	
 ataque(Robot,Iz,De):-
+	%en caso contrario ir hacia la pelota
         pelota_pred(Xb,Yb,_),
 	ir_a_posicion_insegura(Robot,Xb,Yb,Iz,De).
 	%patear_pelota_a_posicion(Robot,X,Y,Iz,De).
-
- 
 
 %**************************************************************
 libero(Robot,Iz,De):-
@@ -232,7 +248,7 @@ libero(Robot,Iz,De):-
 	 centro_arco_contrario(X,Y),
 	 acompannar_a_lleva_pelota2(Robot,X,Y,Iz,De).
 
-
+%********************************************************************
 
 pichero(Robot,Iz,De):-
 	%si no soy el mas cercano y esta atascado entonces desbloquear
@@ -268,6 +284,7 @@ pichero(Robot,Iz,De):-
 	(robot_entre(Robot,X-2,Y-2,X+2,Y+2),Iz is 0,De is 0;
 	ir_a_posicion_precisa(Robot,X,Y,Iz,De)). %posición baseposición base,
 
+%********************************************************************
 
 atajar(_Rol,Robot,Iz,De):-
 	%si esta atascado entonces desbloquear
