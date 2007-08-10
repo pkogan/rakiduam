@@ -6,7 +6,13 @@ Intalación de Rakiduam
   # Instalar ciao Prolog desde http://www.clip.dia.fi.upm.es/Software/Ciao/
   # Instalar Simulador Simurosot desde http://www.fira.net/soccer/simurosot/overview.html
   # Descargar el proxy del jugador azul y del jugador amarillo  (tcpb.dll y tcpy.dll) desde la solapa Downloads de este proyecto. Copiar estos archivos a la carpeta C:\Strategy\Blue y C:\Strategy\Yellow respectivamente que la instalación del simulador ha creado.
-  # Descargar los fuentes del equipo.  Ultima versión desde el servidor svn
+  # Descargar los fuentes del equipo.  Ultima versión desde el servidor svn http://rakiduam.googlecode.com/svn/trunk/ o desde la solapa Downloads de este proyecto.
+  # Compilar los fuentes amarillo.pl y azul.pl haciendo botón derecho desde el explorador y seleccionando la opción Make executable desde el menú contextual.
+  # Ejecutar el la estrategia del equipo ej. (azul.cpx).
+  # Ejecutar el Simulador.
+  # Cargar la estrategia proxy ej. C++ tcpb.
+  # Comenzar a jugar.
 
+  
 
 
