@@ -1,3 +1,22 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya
+%
+%     This file is part of Rakiduam.
+%
+%     Rakiduam is free software; you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation; either version 3 of the License, or
+%     (at your option) any later version.
+%
+%     Rakiduam is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+%
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 :- module(amarillo, [main/0], [assertions]).
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
@@ -26,7 +45,7 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	iniciarVS('localhost',6363,VideoServer), %'192.168.0.3',6363,VideoServer), %
+	iniciarVS('localhost',6365,VideoServer), %'192.168.0.3',6363,VideoServer), %
 
 %	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
 	iniciar('amarillo'),
@@ -39,11 +58,12 @@ main:-
 %% con la función estrategia resulve la acción a realizar en base al Estado actual
  %% con la función sendCS se envía la acción al servidor de comandos
 juego(VideoServer,CommandServer):-
-	%iniciarLog('estrategia.log',Archivo), 
+	iniciarLog('estrategiaAmarillo.log',Archivo), 
 	repeat,
 	   recibirVS(VideoServer,Estado),
-	   %escribirLog(Archivo,Estado),
+	   
 	   estrategia(Estado,ListaVelocidades),
+	   escribirLog(Archivo,Estado,ListaVelocidades),
 	   sendCS(CommandServer,ListaVelocidades),
 	   %display(ListaVelocidades),
 	fail. 
