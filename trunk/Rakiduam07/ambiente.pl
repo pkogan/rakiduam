@@ -1,3 +1,21 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya
+%
+%     This file is part of Rakiduam.
+%
+%     Rakiduam is free software; you can redistribute it and/or modify
+%     it under the terms of the GNU General Public License as published by
+%     the Free Software Foundation; either version 3 of the License, or
+%     (at your option) any later version.
+%
+%     Rakiduam is distributed in the hope that it will be useful,
+%     but WITHOUT ANY WARRANTY; without even the implied warranty of
+%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     GNU General Public License for more details.
+%
+%     You should have received a copy of the GNU General Public License
+%     along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :-module(ambiente,[cancha/4,largo_cancha/1,ancho_cancha/1,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,insertar_estado/1,pelota/3,pelota_pred/3,pelota_en_direccion_a_zona/6,pelota_entre/4,robot_entre/5,atascado/1,atascado2/1,mas_cercano/1,mas_cercanos/2,mas_cercanos2/1,mas_cercanos_lugar/4,jugadores/1,jugadores_propios/1,estado/2,jugador/1,jugador_prev/1,insertar_accion/1,accion_prev/3,accion_prom/3,arco_propio/4,arco_contrario/4,iniciar_ambiente/1],[assertions]).
 :- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4].
 
