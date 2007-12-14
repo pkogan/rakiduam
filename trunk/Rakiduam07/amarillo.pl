@@ -1,5 +1,5 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya
+%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya, Claudio Vaucheret
 %
 %     This file is part of Rakiduam.
 %
@@ -16,6 +16,8 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 :- module(amarillo, [main/0], [assertions]).
 %% modulo azul
