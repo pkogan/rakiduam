@@ -1,3 +1,14 @@
 Lista para hablar con Pablo.
 
-1) number_codes funciona bien con numeros negativos. (sim_video_server_tcp predicado next_number/3 numero_string/2)
+1) number_codes funciona bien con numeros negativos. (sim_video_server_tcp predicado next_number/3 numero_string/2) 
+
+2) principal, amarillo, azul (dejamos uno solo con argumentos?) ( preparlo para mas de una estrategia con parametros) (to2)
+
+3) aclarar versiones sim_video_server
+
+4) el mensaje del sim_video en que orden manda la pos de los jugadores
+(que equipo manda primero) los mensajes son distintos para cada
+equipo? (to2)
+
+5) parametrizar el programa con numero de jugadores. (to2)
+
