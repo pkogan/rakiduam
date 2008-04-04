@@ -1,6 +1,6 @@
 Lista para hablar con Pablo.
 
-1) number_codes funciona bien con numeros negativos. (sim_video_server_tcp predicado next_number/3 numero_string/2) 
+
 
 2) principal, amarillo, azul (dejamos uno solo con argumentos?) ( preparlo para mas de una estrategia con parametros) (to2)
 
@@ -17,10 +17,16 @@ equipo? (to2)
 TODO
 
 
-0) quiero compilar quiero jugar (un dia en casa de mario)
-0') limpiar dejando disponible estrategia y navegación.
-1) crear archivo de configuración 
-2) hacer video_server.pl
+done 0) quiero compilar quiero jugar (un dia en casa de mario)
+0') limpiar dejando disponible estrategia y navegación. (subversion)
+done 1) crear archivo de configuración  
+2) hacer video_server.pl (recordar orden de lista de jugadores)
 3) parametro de numero de jugadores en los videoserver.pl
 4) sacar lo fijo de numero de jugadores en la estrategia.
 
+Claudio
+
+1) number_codes funciona bien con numeros negativos. (sim_video_server_tcp predicado next_number/3 numero_string/2) 
+2) not es \+
+3) sort 
+4) jugadores_propios2 esta mal.

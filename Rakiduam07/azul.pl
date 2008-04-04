@@ -30,6 +30,8 @@
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
 %:- use_module(ambiente).  
+:- use_module(configuration).
+
 :- comment(title, "Equipo de Futbol con Robots").
 
 :- comment(author, "Pablo Kogan").
@@ -42,12 +44,16 @@
 %% la función main inicializa el servidor de comandos y el servidor de video
 %% e inicializa el juego
 
+%% archivo de configuración, usamos xml
+
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	iniciarVS('localhost',6363,VideoServer), %'192.168.0.3',6363,VideoServer), %
+	get_key_number(port,Puerto),
+	get_key(host,Host),
+	iniciarVS(Host,Puerto,VideoServer), %'192.168.0.3',6363,VideoServer), %
 
 %	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
-	iniciar('azul'),
+	iniciar(azul),
         create_threads(10),
 	wait_for_connections(VideoServer).
 	
