@@ -1,5 +1,5 @@
 <config>
   <host>127.0.0.1</host>
-  <port>6362</port>
+  <port>6363</port>
   <numplayers>5</numplayers>
 </config>
