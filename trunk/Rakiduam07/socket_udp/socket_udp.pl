@@ -11,6 +11,9 @@ It behaves unpredictably if @var{X} is not a number.".
 :- true pred close_c(in(X)):: int + foreign.
 
 :- use_foreign_source(socket_udp_c).
+
+:- use_foreign_library('LINUXi86', ['c']).
+
 socket_udp(A, B):- 
         socket_c(A, B).
  
@@ -21,14 +24,14 @@ close_udp(A):-
 	close_c(A).
 
 test:-
-	socket_udp(2005,Socket),
+	socket_udp(6363,Socket),
 	display(Socket),
-	recv_udp(Socket,5,Msg),
+	recv_udp(Socket,10,Msg),
 	write_string(Msg),
-	recv_udp(Socket,45,Msg1),
-	write_string(Msg1),
-	recv_udp(Socket,5,Msg3),
-	write_string(Msg3),
+	% recv_udp(Socket,45,Msg1),
+	% write_string(Msg1),
+	% recv_udp(Socket,5,Msg3),
+	% write_string(Msg3),
 	close_udp(Socket).
 
 %bugs no se pueden recibir paquetes de largo 4 y 5 para

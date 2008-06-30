@@ -24,7 +24,7 @@
 %% módulo principal de la estrategia del equipo azul
 :- use_module(library(concurrency)).
 
-:- use_module(sim_video_server_tcp).
+:- use_module(sim_video_server_linux).
 %% módulo de conexión con el servidor de video
 :- use_module(sim_command_server).
 %% módulo de conexión con el servidor de comandos
@@ -47,13 +47,16 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	iniciarVS('localhost',6365,VideoServer), %'192.168.0.3',6363,VideoServer), %
+	iniciarVS('127.0.0.1',6365,VideoServer), %'192.168.0.3',6363,VideoServer), %
 
-%	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
+	iniciarCS('127.0.0.1',6366,CommandServer), %'192.168.0.3',6364,CommandServer), %
 	iniciar('amarillo'),
-        create_threads(10),
-	wait_for_connections(VideoServer).
+        % create_threads(10),
+	juego(VideoServer,CommandServer).   %udp claudio
+%	wait_for_connections(VideoServer).
 	
+
+
 
 %% la función juego repite hasta que se apriete ^C
 %% con la función recibirVS recibe en Estado el estado actual del ambiente
@@ -74,12 +77,12 @@ juego(VideoServer,CommandServer):-
 
 :- concurrent connection/1.
 
-wait_for_connections(Socket):-
-        repeat,
-        nuevo_juego(Socket, Stream),
-%        socket_buffering(Stream, read, _Old, unbuf),
-        assertz_fact(connection(Stream)),
-        fail.
+% wait_for_connections(Socket):-
+%         repeat,
+%         nuevo_juego(Socket, Stream),
+% %        socket_buffering(Stream, read, _Old, unbuf),
+%         assertz_fact(connection(Stream)),
+%         fail.
 
 create_threads(0).
 create_threads(N):-

@@ -1,4 +1,4 @@
-#include "/usr/local/lib/ciao/ciao-1.10/include/LINUXi86/ciao_gluecode.h"
+#include "/usr/cvs/ciaosystems/CiaoDE/ciao//include/LINUXi86/ciao_gluecode.h"
 
 void socket_c(long, long *);
 BOOL gluecode_socket_c(struct worker *w) {
@@ -66,9 +66,9 @@ BOOL gluecode_close_c(struct worker *w) {
 }
 
 void socket_udp_init(char *module) {
-  define_c_mod_predicate(module, "socket_c", gluecode_socket_c, 2);
-  define_c_mod_predicate(module, "recv_c", gluecode_recv_c, 3);
-  define_c_mod_predicate(module, "close_c", gluecode_close_c, 1);
+  define_c_mod_predicate(module, "socket_c", 2, gluecode_socket_c);
+  define_c_mod_predicate(module, "recv_c", 3, gluecode_recv_c);
+  define_c_mod_predicate(module, "close_c", 1, gluecode_close_c);
 }
 
 void socket_udp_end(char *module) {
