@@ -1,4 +1,4 @@
-#include "ciao_prolog.h"
+/* #include "/usr/cvs/ciaosystems/CiaoDE/ciao/include/LINUXi86/ciao_prolog.h" */
 #include <stdio.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -14,10 +14,11 @@ void socket_c(int puerto,int * number_out) {
     //printf("nro socket %d , salida bind %d,puerto %d \n", * number_out, b,puerto);
 }
 
-char * recv_c(int socket,int largo){
+char buff[2049];
+
+char *  recv_c(int socket,int largo){
     struct sockaddr_in sa;
     //int size = sizeof(sa);
-    char buff[2049];
     int largoreal=recvfrom(socket,buff,largo,0,NULL,NULL);//(struct sockaddr *) &sa,(int *) sizeof(sa));
     if (largoreal<0)
 	printf("Error en recvfrom socket udp, largo real %d\n",largoreal);

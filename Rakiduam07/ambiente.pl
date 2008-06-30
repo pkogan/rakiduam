@@ -55,7 +55,9 @@
 
 iniciar_ambiente('azul'):-
 %arco azul  
+get_key(
 asserta_fact(arco_propio(93.4259,33.9320,93.4259,49.6801)),
+asserta_fact(arco_propio(X1,Y1,X2,Y2)),
 asserta_fact(arco_contrario(6.8118,33.9320,6.8118,49.6801)).
 iniciar_ambiente('amarillo'):-
 %arco amarillo

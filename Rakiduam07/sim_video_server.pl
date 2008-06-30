@@ -16,7 +16,7 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:-module(sim_video_server,[iniciarVS/3,recibirVS/2],[assertions]).
+:-module(sim_video_server,[iniciarVS/3,recibirVS/2,nuevo_juego/2],[assertions]).
 :- use_module(library(sockets)).
 :- use_module(library(strings)).
 :- comment(title, "Modulo Interfaz con el servidor de video").
@@ -44,6 +44,14 @@ iniciarVS(HostVS,PortVS,StreamVS):-
         display(PortVS),
         display(', Host '),
         display(HostVS),
+        display('.'),
+        nl.
+
+
+nuevo_juego(Socket,StreamVS):-
+        socket_accept(Socket, StreamVS),
+        display('Acepto nuevo juego '),
+        display(StreamVS),
         display('.'),
         nl.
 
