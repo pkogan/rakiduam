@@ -6,11 +6,11 @@
   <port>6363</port>
   <numplayers>5</numplayers>
   <players>
-    <player  number="1" equipo="propio" >spot1</player>
-    <player  number="2" equipo="propio" >spot2</player>
-    <player  number="3" equipo="propio" >spot3</player>
-    <player  number="1" equipo="contrario" >spot4</player>
-    <player  number="2" equipo="contrario" >spot5</player>
-    <player  number="3" equipo="contrario" >car54</player>
+    <player  number="1" team="propio" >spot1</player>
+    <player  number="2" team="propio" >spot2</player>
+    <player  number="3" team="propio" >spot3</player>
+    <player  number="1" team="contrario" >spot4</player>
+    <player  number="2" team="contrario" >spot5</player>
+    <player  number="3" team="contrario" >car54</player>
   </players>
 </config>

@@ -1,18 +1,27 @@
-:- module(configuration,[get_element/2,get_element_number/2,get_player/3,get_attributes/2],_).
+:- module(configuration,_,_).
+%:- module(configuration,[get_element/2,get_element_number/2,get_player/3,get_attributes/2],_).
 
+:- use_package(xml_path).
 :- use_package(pillow).
 :- use_module(library(file_utils)).
 
+
+xml_file('config.xml').
+
+
+fetch_xml(Terms) :-
+	xml_file(Xml),
+	file_to_string(Xml,Content),
+	xml2terms(Content,Terms).
+
 get_element_number(Clave,Valor):-
-	file_to_string('config.xml',Xml),
-	xml2terms(Xml,Term),
-	member(env(config,[],L),Term),
+	fetch_xml(Terms),
+	member(env(config,[],L),Terms),
 	member(env(Clave,[],[ValorS]),L),
 	number_codes(Valor,ValorS).
 
 get_attributes(Clave,List):-
-	file_to_string('config.xml',Xml),
-	xml2terms(Xml,Term),
+	fetch_xml(Term),
 	member(env(config,[],L),Term),	
 	member(env(Clave,List1,_),L),
 	convert(List1,List).
@@ -23,18 +32,17 @@ convert([_A=V|R],[VN|S]):-
 	convert(R,S).
 
 get_element(Clave,Valor):-
-	file_to_string('config.xml',Xml),
-	xml2terms(Xml,Term),
+	fetch_xml(Term),
 	member(env(config,[],L),Term),
 	member(env(Clave,[],[ValorS]),L),
 	atom_codes(Valor,ValorS).
 
 get_player(Nombre,Jug,Equipo):-
-	file_to_string('config.xml',Xml),
-	xml2terms(Xml,Term),
-	member(env(config,[],L),Term),
-	member(env(players,[],L2),L),
-	atom_codes(Nombre,Nombres),
-	member(env(player,[number=Jugs,equipo=Equipos],[Nombres]),L2),
-	number_codes(Jug,Jugs),
-	atom_codes(Equipo,Equipos).
+	fetch_xml(Terms),
+	Query = config::players::player@(val(number,Jugs),val(team,Equipos))::(Nombres),
+	xml_query(Query, Terms),
+ 	atom_codes(Nombre,Nombres),
+ 	number_codes(Jug,Jugs),
+ 	atom_codes(Equipo,Equipos).
+
+
