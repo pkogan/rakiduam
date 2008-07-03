@@ -1,10 +1,11 @@
 <config> 
   <arco_alto X1="93.4259" Y1="33.9320" X2="93.4259" Y2="49.6801"> </arco_alto>
   <arco_bajo X1="6.8118" Y1="33.9320" X2="6.8118" Y2="49.6801">  </arco_bajo>
+  <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
   <environment>simulado</environment>
   <host>127.0.0.1</host>
   <port>6363</port>
-  <numplayers>5</numplayers>
+  <numplayers>3</numplayers>
   <players>
     <player  number="1" team="propio" >spot1</player>
     <player  number="2" team="propio" >spot2</player>

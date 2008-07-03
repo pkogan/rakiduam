@@ -33,9 +33,12 @@ convert([_A=V|R],[VN|S]):-
 
 get_element(Clave,Valor):-
 	fetch_xml(Term),
+%	Query = config::(Clave)::(Valor),
+%	xml_query(Query, Term).
 	member(env(config,[],L),Term),
 	member(env(Clave,[],[ValorS]),L),
-	atom_codes(Valor,ValorS).
+	atom_codes(Valor,ValorS).	
+
 
 get_player(Nombre,Jug,Equipo):-
 	fetch_xml(Terms),
@@ -45,4 +48,13 @@ get_player(Nombre,Jug,Equipo):-
  	number_codes(Jug,Jugs),
  	atom_codes(Equipo,Equipos).
 
+
+get_coord(Elem,X1,Y1,X2,Y2):-
+	fetch_xml(Terms),
+	Query = config::(Elem)@(val('X1',X1s),val('X2',X2s),val('Y1',Y1s),val('Y2',Y2s)),
+	xml_query(Query, Terms),
+	number_codes(X1,X1s),	
+	number_codes(X2,X2s),	
+	number_codes(Y1,Y1s),	
+	number_codes(Y2,Y2s).	
 
