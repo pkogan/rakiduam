@@ -20,7 +20,7 @@
 
 
 analyze(S,Pelota,Jugadores,Estado):-
-	get_element(environment,real),
+	get_environment(real),
 	analize(S,L),
 	Estado = [0,0],
 	member(robot(pelota,0,pos(XP,YP,ZP,_)),L),
@@ -28,7 +28,7 @@ analyze(S,Pelota,Jugadores,Estado):-
 	Pelota = pos(XP,YP,ZP).
 
 analyze(S,Pelota,Jugadores,Estado):-
-	get_element(environment,simulado),
+	get_environment(simulado),
 	posxyz(S,Pelota,MensajeR),
 	jugadores(MensajeR,Jugadores,MensajeP),
 	estado(MensajeP,Estado,_MensajeN),!.

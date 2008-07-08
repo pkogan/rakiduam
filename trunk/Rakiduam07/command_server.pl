@@ -54,7 +54,7 @@ iniciarCS(HostCS,PortCS,StreamCS):-
 %Espera recibir los datos del ambiente y los transforma a estructuras de prolog
 
 transform(N,[],L,L):-
-	get_element_number(numplayers,M),N is M + 1.
+	get_numplayers(M),N is M + 1.
 
 transform(N,[Vi,Vd|Rest],Line,LTs) :-
 	N1 is N+1,
@@ -68,12 +68,12 @@ transform(N,[Vi,Vd|Rest],Line,LTs) :-
 	
 
 sendCS(StreamCS,ListaVelocidades):-
-	get_element(environment,real),
+	get_environment(real),
         transform(1,ListaVelocidades,Message,[]),
  	socket_send(StreamCS,Message),!.
 
 sendCS(StreamCS,ListaVelocidades):-
-	get_element(environment,simulado),
+	get_environment(simulado),
 	listavel(ListaVelocidades,Lista_Str),
  	socket_send(StreamCS,Lista_Str),!.
 

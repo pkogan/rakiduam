@@ -17,7 +17,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :-module(ambiente,[cancha/4,largo_cancha/1,ancho_cancha/1,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,insertar_estado/1,pelota/3,pelota_pred/3,pelota_en_direccion_a_zona/6,pelota_entre/4,robot_entre/5,atascado/1,atascado2/1,mas_cercano/1,mas_cercanos/2,mas_cercanos2/1,mas_cercanos_lugar/4,jugadores/1,jugadores_propios/1,estado/2,jugador/1,jugador_prev/1,insertar_accion/1,accion_prev/3,accion_prom/3,arco_propio/4,arco_contrario/4,iniciar_ambiente/1],[assertions]).
-:- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4,cancha/4].
+:- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4,cancha/4,ancho_area/1,alto_area/1,ancho_area_chica/1,alto_area_chica/1].
 
 :-use_module(configuration).
 
@@ -57,36 +57,62 @@
 
 iniciar_ambiente('azul'):-
 %arco azul  
-	get_coord(arco_alto,X1,Y1,X2,Y2),
+	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_propio(93.4259,33.9320,93.4259,49.6801)),
 	asserta_fact(arco_propio(X1,Y1,X2,Y2)),
-	get_coord(arco_bajo,X1b,Y1b,X2b,Y2b),
+	get_arco_bajo(X1b,Y1b,X2b,Y2b),
 %asserta_fact(arco_contrario(6.8118,33.9320,6.8118,49.6801)).
 	asserta_fact(arco_contrario(X1b,Y1b,X2b,Y2b)),
-	get_coord(field,FX1,FY1,FX2,FY2),
-	asserta_fact(cancha(FX1,FY1,FX2,FY2).
+	get_field(FX1,FY1,FX2,FY2),
+	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
+%%%%%%%%%%%%%%
+	get_anchoArea(ANA),
+	asserta_fact(ancho_area(ANA)),
+	get_altoArea(ALA),
+	asserta_fact(alto_area(ALA)),
+	get_anchoAreaChica(ANAC),
+	asserta_fact(ancho_area_chica(ANAC)),
+	get_altoAreaChica(ALAC),
+	asserta_fact(alto_area_chica(ALAC)).
 
 iniciar_ambiente('amarillo'):-
-	get_coord(arco_alto,X1,Y1,X2,Y2),
+	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_contrario(93.4259,33.9320,93.4259,49.6801)),
 	asserta_fact(arco_contrario(X1,Y1,X2,Y2)),
-	get_coord(arco_bajo,X1b,Y1b,X2b,Y2b),
+	get_arco_bajo(X1b,Y1b,X2b,Y2b),
 %asserta_fact(arco_propio(6.8118,33.9320,6.8118,49.6801)).
 	asserta_fact(arco_propio(X1b,Y1b,X2b,Y2b)),
-	get_coord(field,FX1,FY1,FX2,FY2),
-	asserta_fact(cancha(FX1,FY1,FX2,FY2).
-
+	get_field(FX1,FY1,FX2,FY2),
+	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
+%%%%%%
+	get_anchoArea(ANA),
+	asserta_fact(ancho_area(ANA)),
+	get_altoArea(ALA),
+	asserta_fact(alto_area(ALA)),
+	get_anchoAreaChica(ANAC),
+	asserta_fact(ancho_area_chica(ANAC)),
+	get_altoAreaChica(ALAC),
+	asserta_fact(alto_area_chica(ALAC)).
 
 iniciar_ambiente(_):-
 %arco azul  
-	get_coord(arco_alto,X1,Y1,X2,Y2),
+	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_propio(93.4259,33.9320,93.4259,49.6801)),
 	asserta_fact(arco_propio(X1,Y1,X2,Y2)),
-	get_coord(arco_bajo,X1b,Y1b,X2b,Y2b),
+	get_arco_bajo(X1b,Y1b,X2b,Y2b),
 %asserta_fact(arco_contrario(6.8118,33.9320,6.8118,49.6801)).
 	asserta_fact(arco_contrario(X1b,Y1b,X2b,Y2b)),
-	get_coord(field,FX1,FY1,FX2,FY2),
-	asserta_fact(cancha(FX1,FY1,FX2,FY2).
+	get_field(FX1,FY1,FX2,FY2),
+	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
+%%%%%%%%%
+	get_anchoArea(ANA),
+	asserta_fact(ancho_area(ANA)),
+	get_altoArea(ALA),
+	asserta_fact(alto_area(ALA)),
+	get_anchoAreaChica(ANAC),
+	asserta_fact(ancho_area_chica(ANAC)),
+	get_altoAreaChica(ALAC),
+	asserta_fact(alto_area_chica(ALAC)).
 
 
 
@@ -118,19 +144,19 @@ medio_cancha(X,Y):-
 	X is X1 + L/2,
 	Y is Y1 + A/2.
 %*************************************%Medidas del área del arco
-:- pred ancho_area(-Ancho) :: int 
- # "Retorna en @var{Ancho} el ancho del area.".
-ancho_area(14).
-:- pred alto_area(-Alto) :: int 
- # "Retorna en @var{Alto} el alto del area.".
-alto_area(31).
+% :- pred ancho_area(-Ancho) :: int 
+%  # "Retorna en @var{Ancho} el ancho del area.".
+% ancho_area(14).
+% :- pred alto_area(-Alto) :: int 
+%  # "Retorna en @var{Alto} el alto del area.".
+% alto_area(31).
 
-:- pred ancho_area_chica(-Ancho) :: int 
- # "Retorna en @var{Ancho} el ancho del area chica.".
-ancho_area_chica(6).
-:- pred alto_area_chica(-Alto) :: int 
- # "Retorna en @var{Alto} el alto del area chica.".
-alto_area_chica(15.5).
+% :- pred ancho_area_chica(-Ancho) :: int 
+%  # "Retorna en @var{Ancho} el ancho del area chica.".
+% ancho_area_chica(6).
+% :- pred alto_area_chica(-Alto) :: int 
+%  # "Retorna en @var{Alto} el alto del area chica.".
+% alto_area_chica(15.5).
 
 :- pred pelota_pred(-X,-Y,-Z) :: int * int * int
  # "Retorna la posicion predecida de la pelota en el punto (@var{X},@var{Y},@var{Z}), calculada en base a las dos ultimas posiciones de esta. La tercera ordenada @var{Z} no es utilizada.".
