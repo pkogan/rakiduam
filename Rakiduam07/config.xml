@@ -1,10 +1,27 @@
-<config> 
+<config>
+  <anchoArea>14</anchoArea>
+  <altoArea>31</altoArea>
+  <anchoAreaChica>6</anchoAreaChica>
+  <altoAreaChica>15.5</altoAreaChica>
+  <!-- <accionesPrev>[0,0,0,0,0,0,0,0,0,0]</accionesPrev> -->
+  <!-- <accionesProm>[0,0,0,0,0,0,0,0,0,0]</accionesProm> -->
   <arco_alto X1="93.4259" Y1="33.9320" X2="93.4259" Y2="49.6801"> </arco_alto>
   <arco_bajo X1="6.8118" Y1="33.9320" X2="6.8118" Y2="49.6801">  </arco_bajo>
   <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
   <environment>simulado</environment>
-  <host>127.0.0.1</host>
-  <port>6363</port>
+  <video_server hostname="127.0.0.1" port="6365">
+  </video_server>  
+  <command_server>
+    <host>127.0.0.1</host>
+    <port>6366</port>
+  </command_server>  
+
+  <!-- <host>127.0.0.1</host> -->
+  <!-- <port>6363</port> -->
+  <!-- <video_host>127.0.0.1</video_host> -->
+  <!-- <video_port>6365</video_port> -->
+  <!-- <command_host>127.0.0.1</command_host> -->
+  <!-- <command_port>6366</command_port> -->
   <numplayers>3</numplayers>
   <players>
     <player  number="1" team="propio" >spot1</player>

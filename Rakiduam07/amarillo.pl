@@ -47,9 +47,12 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	iniciarVS('127.0.0.1',6365,VideoServer), %'192.168.0.3',6363,VideoServer), %
-
-	iniciarCS('127.0.0.1',6366,CommandServer), %'192.168.0.3',6364,CommandServer), %
+	get_video_port(PuertoV),
+	get_video_host(HostV),
+	iniciarVS(HostV,PuertoV,VideoServer), %'192.168.0.3',6363,VideoServer), %
+	get_command_port(PuertoC),
+	get_command_host(HostC),
+	iniciarCS(HostC,PuertoC,CommandServer), %'192.168.0.3',6364,CommandServer), %
 	iniciar('amarillo'),
         % create_threads(10),
 	juego(VideoServer,CommandServer).   %udp claudio

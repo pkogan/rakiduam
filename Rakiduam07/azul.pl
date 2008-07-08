@@ -48,8 +48,8 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	get_element_number(port,Puerto),
-	get_element(host,Host),
+	get_port(Puerto),
+	get_host(Host),
 	iniciarVS(Host,Puerto,VideoServer), %'192.168.0.3',6363,VideoServer), %
 
 %	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
