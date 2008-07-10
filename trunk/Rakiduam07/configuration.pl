@@ -1,4 +1,5 @@
-:- module(configuration,_,_).
+:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2],_).
+
 %:- module(configuration,[get_element/2,get_element_number/2,get_player/3,get_attributes/2],_).
 
 :- use_package(xml_path).
@@ -21,15 +22,6 @@ get_element_number(Terms,Clave,Valor):-
 	member(env(Clave,[],[ValorS]),L),
 	number_codes(Valor,ValorS).
 
-% get_attributes(Terms,Clave,List):-
-% 	member(env(config,[],L),Terms),	
-% 	member(env(Clave,List1,_),L),
-% 	convert(List1,List).
-
-% convert([],[]).
-% convert([_A=V|R],[VN|S]):-
-% 	number_codes(VN,V),
-% 	convert(R,S).
 
 get_element(Terms,Clave,Valor):-
 %	Query = config::(Clave)::(Valor),
@@ -38,13 +30,19 @@ get_element(Terms,Clave,Valor):-
 	member(env(Clave,[],[ValorS]),L),
 	atom_codes(Valor,ValorS).	
 
+get_all_roles(Terms,Nombre,Role):-
+	Query = config::players::player@(val(role,RoleStr))::(NombreS),
+	xml_query(Query, Terms),
+ 	atom_codes(Nombre,NombreS),
+ 	atom_codes(Role,RoleStr).
+
 
 get_players(Terms,Nombre,Jug,Equipo):-
-	Query = config::players::player@(val(number,Jugs),val(team,Equipos))::(Nombres),
+	Query = config::players::player@(val(number,JugS),val(team,EquipoS))::(NombreS),
 	xml_query(Query, Terms),
- 	atom_codes(Nombre,Nombres),
- 	number_codes(Jug,Jugs),
- 	atom_codes(Equipo,Equipos).
+ 	atom_codes(Nombre,NombreS),
+ 	number_codes(Jug,JugS),
+ 	atom_codes(Equipo,EquipoS).
 
 get_host_and_port(Terms,Element,Hostname,Port):-
 	Query = config::(Element)@(val(hostname,HostnameS),val(port,PortS)),
@@ -82,16 +80,27 @@ start:-
 	get_host_and_port(Terms,video_server,VideoHost,VideoPort),
 	asserta_fact(get_video_host(VideoHost)),
 	asserta_fact(get_video_port(VideoPort)),
-	get_host_and_port(Terms,command_server,VideoHost,VideoPort),
-	asserta_fact(get_command_host(VideoHost)),
-	asserta_fact(get_command_port(VideoPort)),
-        assert_players(Terms).
+	get_host_and_port(Terms,command_server,CmmdHost,CmmdPort),
+	asserta_fact(get_command_host(CmmdHost)),
+	asserta_fact(get_command_port(CmmdPort)),
+	get_element_number(Terms,numplayers,NumP),
+	asserta_fact(get_numplayers(NumP)),
+        assert_players(Terms),
+	assert_roles(Terms).
 
 assert_players(Terms):-
 	get_players(Terms,Nombre,Jug,Equipo),
 	assertz_fact(get_player(Nombre,Jug,Equipo)),
 	fail.
+
 assert_players(_).
+
+assert_roles(Terms):-
+	get_all_roles(Terms,Nombre,Role),
+	assertz_fact(get_role(Nombre,Role)),
+	fail.
+
+assert_roles(_).
 
 	
 
@@ -109,7 +118,8 @@ assert_players(_).
 	get_command_host/1,
 	get_command_port/1,
 	get_numplayers/1,
-	get_player/3
+	get_player/3,
+	get_role/2
 	].
 
 % <config>

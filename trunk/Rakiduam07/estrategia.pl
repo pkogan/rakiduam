@@ -17,7 +17,8 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(estrategia, [estrategia/2,iniciar/1], [assertions]).
+:- module(estrategia, _, [assertions]).
+%:- module(estrategia, [estrategia/2,iniciar/1], [assertions]).
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 %:- use_module(sim_video_server).
@@ -29,6 +30,8 @@
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
 :- use_module(ambiente).
+:- use_module(configuration).
+
 :- comment(title, "Modulo estrategia").
 :- comment(author, "Pablo Kogan").
 
@@ -47,8 +50,15 @@ iniciar(Equipo):- iniciar_ambiente(Equipo).
  # "El predicado estrategia resuelve la acción a tomar (velocidad en cada rueda de cada robot @var{ListaVelocidades}) en base al @var{Estado} actual del ambiente.".
 %% la función estrategia resuelve la acción a tomar (velocidad en cada rueda de cada robot) en base al Estado actual
 
-%estrategia(Estado,[0,0,0,0,0,0,0,0,125,-125]).
 
+% estrategia(Estado,ListaVelocidades):-
+% 	%nl,display(Estado),nl,
+% 	insertar_estado(Estado),
+% 	get_numplayers(N),
+% 	nueva_estrategia(N,ListaVelocidades),
+% 	insertar_accion(ListaVelocidades),
+% 	%display(' paso insertar_accion'), 
+% 	!.
 
 estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
 	%nl,display(Estado),nl,
@@ -65,43 +75,54 @@ estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
 
 
 %***************************asignación roles
-asignacion_rol('kiñe','arquero').
-asignacion_rol('epu','jugador').
-asignacion_rol('küla','jugador').
-asignacion_rol('meli','jugador').
-asignacion_rol('kechu','jugador').
+% 
+% asignacion_rol('kiñe','arquero').
+% asignacion_rol('epu','jugador').
+% asignacion_rol('küla','jugador').
+% asignacion_rol('meli','jugador').
+% asignacion_rol('kechu','jugador').
 %****************************asignación robots
-asignacion_robot('kiñe',robot('propio',1,Pos)):-
-	jugador(robot('propio',1,Pos)).
-asignacion_robot('epu',robot('propio',2,Pos)):-
-	jugador(robot('propio',2,Pos)).
-asignacion_robot('küla',robot('propio',3,Pos)):-
-	jugador(robot('propio',3,Pos)).
-asignacion_robot('meli',robot('propio',4,Pos)):-
-	jugador(robot('propio',4,Pos)).
-asignacion_robot('kechu',robot('propio',5,Pos)):-
-	jugador(robot('propio',5,Pos)).
+asignacion_robot(Name, robot(propio,Num,Pos)) :-
+	get_player(Name,Num,propio),
+	jugador(robot(propio,Num,Pos)).
+
+asignacion_robot(_,_).
+% asignacion_robot('kiñe',robot('propio',1,Pos)):-
+% 	jugador(robot('propio',1,Pos)).
+% asignacion_robot('epu',robot('propio',2,Pos)):-
+% 	jugador(robot('propio',2,Pos)).
+% asignacion_robot('küla',robot('propio',3,Pos)):-
+% 	jugador(robot('propio',3,Pos)).
+% asignacion_robot('meli',robot('propio',4,Pos)):-
+% 	jugador(robot('propio',4,Pos)).
+% asignacion_robot('kechu',robot('propio',5,Pos)):-
+% 	jugador(robot('propio',5,Pos)).
 
 %*******************************************comportamientos dinamicos*****************************************
 
+% comportamiento(Jugador,Iz,De):-
+% 	asignacion_rol(Jugador,Rol),
+% 	asignacion_robot(Jugador,Robot),
+% 	accion(Rol,Robot,Iz,De).
+
 comportamiento(Jugador,Iz,De):-
-	asignacion_rol(Jugador,Rol),
+	get_role(Jugador,Rol),
 	asignacion_robot(Jugador,Robot),
 	accion(Rol,Robot,Iz,De).
 
 % El arquero se resuelve  con el predicado atajar
-accion('arquero',Robot,Iz,De):-
+accion(arquero,Robot,Iz,De):-
 	atajar('arquero',Robot,Iz,De).
 
 % El rol de jugador
 %si la pelota esta en el campo própio hace juego brusco
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 	campo_propio(X1c,Y1c,X2c,Y2c),	pelota_entre(X1c,Y1c,X2c,Y2c),
 	brusco(Robot,Iz,De).
 
 %si la pelota esta en las bandas y el jugador esta entre los tres mas
 %cercanos hace juego brusco
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 	bandas(X1c,Y1c,X2c,Y2c),pelota_entre(X1c,Y1c,X2c,Y2c),
 	mas_cercanos(Robot,3),
 	%mas_cercanos(Robot,2),
@@ -109,27 +130,27 @@ accion('jugador',Robot,Iz,De):-
 
 %si la pelota esta en el área contraria y el jugador esta entre los tres
 %mas cercanos realiza ataque_area
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 	area_contraria(Xa1,Ya1,Xa2,Ya2),
 	pelota_entre(Xa1,Ya1,Xa2,Ya2),
 	mas_cercanos(Robot,3),
 	ataque_area(Robot,Iz,De).
 
 %si esta entre los tres más cercanos realiza ataque
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 %	campo_contrario(X1c,Y1c,X2c,Y2c),
 %	pelota_entre(X1c,Y1c,X2c,Y2c),
 	mas_cercanos(Robot,3),
 	ataque(Robot,Iz,De).
 
 %si es el más cercano al centro de la cancha juega de pichero
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 	medio_cancha(X,Y),
 	mas_cercanos_lugar(Robot,1,X,Y),
 	pichero(Robot,Iz,De).
 
 %en caso que no se cumpla ninguna de las anteriores juega de líbero
-accion('jugador',Robot,Iz,De):-
+accion(jugador,Robot,Iz,De):-
 	libero(Robot,Iz,De).
 
 

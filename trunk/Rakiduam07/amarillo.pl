@@ -33,6 +33,8 @@
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
 %:- use_module(ambiente).  
+:- use_module(configuration,[get_video_port/1,get_video_host/1,get_command_port/1,get_command_host/1]).
+
 :- comment(title, "Equipo de Futbol con Robots").
 
 :- comment(author, "Pablo Kogan").

@@ -55,7 +55,7 @@
 :- comment(doinclude,accion_prom/3).
 
 
-iniciar_ambiente('azul'):-
+iniciar_ambiente(azul):-
 %arco azul  
 	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_propio(93.4259,33.9320,93.4259,49.6801)),
@@ -65,7 +65,6 @@ iniciar_ambiente('azul'):-
 	asserta_fact(arco_contrario(X1b,Y1b,X2b,Y2b)),
 	get_field(FX1,FY1,FX2,FY2),
 	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
-%%%%%%%%%%%%%%
 	get_anchoArea(ANA),
 	asserta_fact(ancho_area(ANA)),
 	get_altoArea(ALA),
@@ -73,9 +72,11 @@ iniciar_ambiente('azul'):-
 	get_anchoAreaChica(ANAC),
 	asserta_fact(ancho_area_chica(ANAC)),
 	get_altoAreaChica(ALAC),
-	asserta_fact(alto_area_chica(ALAC)).
+	asserta_fact(alto_area_chica(ALAC)),
+	get_numplayers(N),
+	assert_actions_prev_prom(N).
 
-iniciar_ambiente('amarillo'):-
+iniciar_ambiente(amarillo):-
 	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_contrario(93.4259,33.9320,93.4259,49.6801)),
 	asserta_fact(arco_contrario(X1,Y1,X2,Y2)),
@@ -84,7 +85,6 @@ iniciar_ambiente('amarillo'):-
 	asserta_fact(arco_propio(X1b,Y1b,X2b,Y2b)),
 	get_field(FX1,FY1,FX2,FY2),
 	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
-%%%%%%
 	get_anchoArea(ANA),
 	asserta_fact(ancho_area(ANA)),
 	get_altoArea(ALA),
@@ -92,7 +92,10 @@ iniciar_ambiente('amarillo'):-
 	get_anchoAreaChica(ANAC),
 	asserta_fact(ancho_area_chica(ANAC)),
 	get_altoAreaChica(ALAC),
-	asserta_fact(alto_area_chica(ALAC)).
+	asserta_fact(alto_area_chica(ALAC)),
+	get_numplayers(N),
+	assert_actions_prev_prom(N).
+
 
 iniciar_ambiente(_):-
 %arco azul  
@@ -104,7 +107,6 @@ iniciar_ambiente(_):-
 	asserta_fact(arco_contrario(X1b,Y1b,X2b,Y2b)),
 	get_field(FX1,FY1,FX2,FY2),
 	asserta_fact(cancha(FX1,FY1,FX2,FY2)),
-%%%%%%%%%
 	get_anchoArea(ANA),
 	asserta_fact(ancho_area(ANA)),
 	get_altoArea(ALA),
@@ -112,7 +114,10 @@ iniciar_ambiente(_):-
 	get_anchoAreaChica(ANAC),
 	asserta_fact(ancho_area_chica(ANAC)),
 	get_altoAreaChica(ALAC),
-	asserta_fact(alto_area_chica(ALAC)).
+	asserta_fact(alto_area_chica(ALAC)),
+	get_numplayers(N),
+	assert_actions_prev_prom(N).
+
 
 
 
@@ -458,22 +463,42 @@ jugadores_propios2(_,[]).
  # "Predicado para la seleccion del jugador X.".
 
 %selección de jugador X
+%09/07/2008 cambio jugador2 por member
 jugador(Robot):-
 	jugadores(Jugadores),
-	jugador2(Jugadores,Robot).
+	member(Robot,Jugadores).
+%	jugador2(Jugadores,Robot).
+
+% jugador(Robot):-
+% 	jugadores(Jugadores),
+% 	jugador2(Jugadores,Robot).
 jugador_prev(Robot):-
 	jugadores_prev(Jugadores),
-	jugador2(Jugadores,Robot).
+	member(Robot,Jugadores).
+	%jugador2(Jugadores,Robot).
 
-jugador2(_,robot(_,X,_)):- X>5,display('error').
+jugador2(_,robot(_,X,_)):- get_numplayers(N),X>N,display('error').
 jugador2([],_).
 jugador2([robot(E,X,P)|_R],robot(E,X,P)).
 jugador2([_RR|R],robot(E,X,PosRobot)):-
 	jugador2(R,robot(E,X,PosRobot)).
 
 %estado interno inicial de las acciones previas y promedio realizadas
-acciones_prev([0,0,0,0,0,0,0,0,0,0]).
-acciones_prom([0,0,0,0,0,0,0,0,0,0]).
+assert_actions_prev_prom(N) :-
+	get_initial_velocity_list(N,Vs),
+	asserta_fact(acciones_prev(Vs)),
+	asserta_fact(acciones_prom(Vs)).
+
+%assert_actions_prev_prom(_).
+
+get_initial_velocity_list(0,[]).
+
+get_initial_velocity_list(N,[0,0|Vs]):-
+	N1 is N - 1,
+	get_initial_velocity_list(N1,Vs),!.
+	
+%acciones_prev([0,0,0,0,0,0,0,0,0,0]).
+%acciones_prom([0,0,0,0,0,0,0,0,0,0]).
 
 
 :- pred insertar_accion(+Acciones) :: list
