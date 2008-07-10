@@ -1,4 +1,9 @@
 <config>
+  <environment>simulado</environment>
+  <video_server hostname="127.0.0.1" port="6363">
+  </video_server>  
+  <command_server hostname="127.0.0.1" port="6366">
+  </command_server>  
   <anchoArea>14</anchoArea>
   <altoArea>31</altoArea>
   <anchoAreaChica>6</anchoAreaChica>
@@ -8,27 +13,17 @@
   <arco_alto X1="93.4259" Y1="33.9320" X2="93.4259" Y2="49.6801"> </arco_alto>
   <arco_bajo X1="6.8118" Y1="33.9320" X2="6.8118" Y2="49.6801">  </arco_bajo>
   <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
-  <environment>simulado</environment>
-  <video_server hostname="127.0.0.1" port="6365">
-  </video_server>  
-  <command_server>
-    <host>127.0.0.1</host>
-    <port>6366</port>
-  </command_server>  
-
-  <!-- <host>127.0.0.1</host> -->
-  <!-- <port>6363</port> -->
-  <!-- <video_host>127.0.0.1</video_host> -->
-  <!-- <video_port>6365</video_port> -->
-  <!-- <command_host>127.0.0.1</command_host> -->
-  <!-- <command_port>6366</command_port> -->
-  <numplayers>3</numplayers>
+  <numplayers>5</numplayers>
   <players>
-    <player  number="1" team="propio" >spot1</player>
-    <player  number="2" team="propio" >spot2</player>
-    <player  number="3" team="propio" >spot3</player>
-    <player  number="1" team="contrario" >spot4</player>
-    <player  number="2" team="contrario" >spot5</player>
-    <player  number="3" team="contrario" >car54</player>
+    <player  number="1" team="propio" role="arquero">kiñe</player>
+    <player  number="2" team="propio" role="jugador">epu</player>
+    <player  number="3" team="propio" role="jugador">küla</player>
+    <player  number="4" team="propio" role="jugador">meli</player>
+    <player  number="5" team="propio" role="jugador">kechu</player>
+    <player  number="1" team="contrario" >spot1</player>
+    <player  number="2" team="contrario" >spot2</player>
+    <player  number="3" team="contrario" >spot3</player>
+    <player  number="4" team="contrario" >spot4</player>
+    <player  number="5" team="contrario" >spot5</player>
   </players>
 </config>

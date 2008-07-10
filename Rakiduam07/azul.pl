@@ -30,7 +30,7 @@
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
 %:- use_module(ambiente).  
-:- use_module(configuration).
+:- use_module(configuration,[get_video_port/1,get_video_host/1]).
 
 :- comment(title, "Equipo de Futbol con Robots").
 
@@ -48,8 +48,8 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	get_port(Puerto),
-	get_host(Host),
+	get_video_port(Puerto),
+	get_video_host(Host),
 	iniciarVS(Host,Puerto,VideoServer), %'192.168.0.3',6363,VideoServer), %
 
 %	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
