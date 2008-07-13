@@ -1,0 +1,35 @@
+Todo list:
+
+
+* LPDoc en los nuevos predicados.
+   Falta LPDoc en los predicados de los módulos configuration,
+   video_parser, command_server.
+
+* Optimizar configuration.pl y config.xml 
+  El hecho player_names(L) no tiene que depender del orden que en que se ingresaron los
+  datos en config.xml. Ahora está devolviendo una lista en orden
+   inverso al que está ingresado en config.xml.
+
+* Refactorizar configuration.pl en varios módulos
+  Cada módulo que utiliza a configuration.pl
+   (:-use_module(configuration)) implica que el predicado start (:-
+   initialization(start)) se ejecuta una vez por cada uno de esos
+   módulos.
+    - ¿Esto es así?
+    - ¿No deberíamos dividir en varios modulos de configuracion,
+       por ejemplo configuration-server, configuration-enviroment y
+       configuration-team? 
+
+* Optimizar asignacion_rol y asignacion_robot en estrategia.pl
+   Estos predicados hacen uso de informacion repetida que ya se podría
+   obtener de configuration.pl, o no ser que se quiera tener cambios
+   de asignaciones dinámicas.
+
+
+
+* Permitir asignacion de roles dinámicas.
+   Al pasar los roles al archivo de configuración config.xml estos
+   pasan a ser estáticos durante la ejecución puesto que la
+   configuracion se lee una vez al iniciar.
+   Se podría sobrescribir el hecho asertado con set_fact.
+
