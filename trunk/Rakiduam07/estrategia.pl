@@ -17,8 +17,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(estrategia, _, [assertions]).
-%:- module(estrategia, [estrategia/2,iniciar/1], [assertions]).
+:- module(estrategia, [estrategia/2,iniciar/1], [assertions]).
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 %:- use_module(sim_video_server).
@@ -39,9 +38,6 @@
 
 :- comment(doinclude,estrategia/2).
 
-%arco_propio(93.4259,33.9320,93.4259,49.6801). arco_contrario(6.8118,33.9320,6.8118,49.6801).
-%arco amarillo
-%arco_contrario(93.4259,33.9320,93.4259,49.6801). arco_propio(6.8118,33.9320,6.8118,49.6801).
 
 iniciar(Equipo):- iniciar_ambiente(Equipo).
 
@@ -50,28 +46,40 @@ iniciar(Equipo):- iniciar_ambiente(Equipo).
  # "El predicado estrategia resuelve la acción a tomar (velocidad en cada rueda de cada robot @var{ListaVelocidades}) en base al @var{Estado} actual del ambiente.".
 %% la función estrategia resuelve la acción a tomar (velocidad en cada rueda de cada robot) en base al Estado actual
 
+estrategia(Estado,Vs):-
+%	nl,display(Estado),nl,
+	insertar_estado(Estado),
+	get_team_behavior(Vs),
+%	display(Vs),nl,
+	insertar_accion(Vs),
+	!.
 
-% estrategia(Estado,ListaVelocidades):-
-% 	%nl,display(Estado),nl,
+
+get_team_behavior(Vs) :-
+	players_names(Players),
+	get_behavior(Players,Vs),!.
+
+get_behavior([],[]).
+
+get_behavior([Name|Tail],[Vi,Vd|Vs]) :-
+	comportamiento(Name,Vi,Vd),
+	get_behavior(Tail,Vs).
+
+
+
+% estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
+% 	nl,display(Estado),nl,
 % 	insertar_estado(Estado),
-% 	get_numplayers(N),
-% 	nueva_estrategia(N,ListaVelocidades),
-% 	insertar_accion(ListaVelocidades),
+%  	comportamiento('kechu',Iz5,De5),
+%  	%display(Iz5),display(','),display(De5),nl,
+%  	comportamiento('meli',Iz4,De4),
+%  	comportamiento('küla',Iz3,De3),
+%  	comportamiento('epu',Iz2,De2),
+%  	comportamiento('kiñe',Iz1,De1),
+% 	display([Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]),nl,
+% 	insertar_accion([Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]),
 % 	%display(' paso insertar_accion'), 
 % 	!.
-
-estrategia(Estado,[Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]):-
-	%nl,display(Estado),nl,
-	insertar_estado(Estado),
- 	comportamiento('kechu',Iz5,De5),
- 	%display(Iz5),display(','),display(De5),nl,
- 	comportamiento('meli',Iz4,De4),
- 	comportamiento('küla',Iz3,De3),
- 	comportamiento('epu',Iz2,De2),
-	comportamiento('kiñe',Iz1,De1),
-	insertar_accion([Iz1,De1,Iz2,De2,Iz3,De3,Iz4,De4,Iz5,De5]),
-	%display(' paso insertar_accion'), 
-	!.
 
 
 %***************************asignación roles
@@ -109,10 +117,11 @@ comportamiento(Jugador,Iz,De):-
 	get_role(Jugador,Rol),
 	asignacion_robot(Jugador,Robot),
 	accion(Rol,Robot,Iz,De).
+	%set_fact(behavior(Jugador,Iz,De)).
 
 % El arquero se resuelve  con el predicado atajar
 accion(arquero,Robot,Iz,De):-
-	atajar('arquero',Robot,Iz,De).
+	atajar(arquero,Robot,Iz,De).
 
 % El rol de jugador
 %si la pelota esta en el campo própio hace juego brusco
@@ -466,7 +475,7 @@ centro_arco_contrario(X,Y):-
 	Y is Yc1 + (Yc2-Yc1)/2.	
 %posiciones de los roles de la estrategia
 
-pos_base('arquero',X,Y):-
+pos_base(arquero,X,Y):-
 	pelota_pred(_Xb,Yb,_),
 	area_chica_propia(X1,Y1,X2,Y2),
 	largo_cancha(L),
@@ -477,7 +486,7 @@ pos_base('arquero',X,Y):-
 	(Y1<Yb,Yb<Y2,Y is Yb;
 	Y1>Yb,Y is Y1;
 	Y is Y2).
-pos_base('arquero',X,Y):-	centro_arco_propio(X,Y).
+pos_base(arquero,X,Y):-	centro_arco_propio(X,Y).
  
 pos_base('delantero_derecho',X,Y):-
 	largo_cancha(L),
@@ -515,7 +524,7 @@ pos_base('defensor_izquierdo',X,Y):-
 	Signo is (Xp1 - Xc1)/L,
 	X is Xp1 - Signo*L/4,
 	Y is Ymc - Signo*A/4.
-area('arquero',X1,Y1,X2,Y2):-
+area(arquero,X1,Y1,X2,Y2):-
 	area_propia(X1,Y1,X2,Y2).
 area('delantero_derecho',X1,Y1,X2,Y2):-
 	pos_base('delantero_derecho',X,Y),

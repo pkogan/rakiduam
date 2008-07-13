@@ -1,6 +1,4 @@
-:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2],_).
-
-%:- module(configuration,[get_element/2,get_element_number/2,get_player/3,get_attributes/2],_).
+:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2,players_names/1],_).
 
 :- use_package(xml_path).
 :- use_package(pillow).
@@ -44,6 +42,13 @@ get_players(Terms,Nombre,Jug,Equipo):-
  	number_codes(Jug,JugS),
  	atom_codes(Equipo,EquipoS).
 
+%obtiene los nombres de los jugadores propios
+get_players_names(Terms,Nombre):-
+	Query = config::players::player@(val(team,"propio"))::(NombreS),
+	xml_query(Query, Terms),
+ 	atom_codes(Nombre,NombreS).
+
+
 get_host_and_port(Terms,Element,Hostname,Port):-
 	Query = config::(Element)@(val(hostname,HostnameS),val(port,PortS)),
 	xml_query(Query, Terms),
@@ -86,21 +91,38 @@ start:-
 	get_element_number(Terms,numplayers,NumP),
 	asserta_fact(get_numplayers(NumP)),
         assert_players(Terms),
+	assert_players_names(Terms),
 	assert_roles(Terms).
+
+
+players_names([]). 
 
 assert_players(Terms):-
 	get_players(Terms,Nombre,Jug,Equipo),
-	assertz_fact(get_player(Nombre,Jug,Equipo)),
+	asserta_fact(get_player(Nombre,Jug,Equipo)),
+% 	asserta_fact(players_names([Plyrs|Nombre])),
 	fail.
 
 assert_players(_).
 
+
+
+assert_players_names(Terms) :-	
+	get_players_names(Terms,Nombre),
+ 	current_fact(players_names(P)),
+ 	set_fact(players_names([Nombre|P])),
+	fail.
+
+assert_players_names(_).
+
 assert_roles(Terms):-
 	get_all_roles(Terms,Nombre,Role),
-	assertz_fact(get_role(Nombre,Role)),
+	asserta_fact(get_role(Nombre,Role)),
 	fail.
 
 assert_roles(_).
+
+
 
 	
 
@@ -119,30 +141,8 @@ assert_roles(_).
 	get_command_port/1,
 	get_numplayers/1,
 	get_player/3,
-	get_role/2
+	get_role/2,
+	players_names/1
 	].
 
-% <config>
-%   <anchoArea>14</anchoArea>
-%   <altoArea>31</altoArea>
-%   <anchoAreaChica>6</anchoAreaChica>
-%   <altoAreaChica>15.5</altoAreaChica>
-%   <!-- <accionesPrev>[0,0,0,0,0,0,0,0,0,0]</accionesPrev> -->
-%   <!-- <accionesProm>[0,0,0,0,0,0,0,0,0,0]</accionesProm> -->
-%   <arco_alto X1="93.4259" Y1="33.9320" X2="93.4259" Y2="49.6801"> </arco_alto>
-%   <arco_bajo X1="6.8118" Y1="33.9320" X2="6.8118" Y2="49.6801">  </arco_bajo>
-%   <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
-%   <environment>simulado</environment>
-%   <host>127.0.0.1</host>
-%   <port>6363</port>
-%   <numplayers>3</numplayers>
-%   <players>
-%     <player  number="1" team="propio" >spot1</player>
-%     <player  number="2" team="propio" >spot2</player>
-%     <player  number="3" team="propio" >spot3</player>
-%     <player  number="1" team="contrario" >spot4</player>
-%     <player  number="2" team="contrario" >spot5</player>
-%     <player  number="3" team="contrario" >car54</player>
-%   </players>
-% </config>
 
