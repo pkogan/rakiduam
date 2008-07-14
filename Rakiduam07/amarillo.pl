@@ -26,7 +26,7 @@
 
 :- use_module(sim_video_server_linux).
 %% módulo de conexión con el servidor de video
-:- use_module(sim_command_server).
+:- use_module(command_server).
 %% módulo de conexión con el servidor de comandos
 :- use_module(estrategia).
 %% módulo para gestión de logs
@@ -71,8 +71,9 @@ juego(VideoServer,CommandServer):-
 	iniciarLog('estrategiaAmarillo.log',Archivo), 
 	repeat,
 	   recibirVS(VideoServer,Estado),
-	   
+	   display(Estado),nl,   
 	   estrategia(Estado,ListaVelocidades),
+	   display(ListaVelocidades),nl,
 	   escribirLog(Archivo,Estado,ListaVelocidades),
 	   sendCS(CommandServer,ListaVelocidades),
 	   %display(ListaVelocidades),

@@ -33,3 +33,5 @@ Todo list:
    configuracion se lee una vez al iniciar.
    Se podría sobrescribir el hecho asertado con set_fact.
 
+* encontrar salon para cena camaraderia
+   

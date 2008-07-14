@@ -17,7 +17,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(estrategia, [estrategia/2,iniciar/1], [assertions]).
+:- module(estrategia, [estrategia/2,iniciar/1,get_team_behavior/1], [assertions]).
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 %:- use_module(sim_video_server).
@@ -25,6 +25,7 @@
 %:- use_module(sim_command_server).
 %% módulo de conexión con el servidor de comandos
 :- use_module(primitivas).
+:- use_module(navegacion).
 %% módulo para gestión de logs
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
@@ -120,6 +121,10 @@ comportamiento(Jugador,Iz,De):-
 	%set_fact(behavior(Jugador,Iz,De)).
 
 % El arquero se resuelve  con el predicado atajar
+accion(prueba,Robot,Iz,De) :-
+	pelota_pred(X,Y,_Z),
+	ir_a_posicion(Robot,X,Y,Iz,De).
+
 accion(arquero,Robot,Iz,De):-
 	atajar(arquero,Robot,Iz,De).
 
