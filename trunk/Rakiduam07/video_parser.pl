@@ -22,9 +22,9 @@
 analyze(S,Pelota,Jugadores,Estado):-
 	get_environment(real),
 	analize(S,L),
-	Estado = [0,0],
-	member(robot(pelota,0,pos(XP,YP,ZP,_)),L),
-	delete_non_ground(L,robot(pelota,0,pos(XP,YP,ZP,_)),Jugadores),
+	Estado = estado(0,0),
+	member(robot(ball1,0,pos(XP,YP,ZP,_)),L),
+	delete_non_ground(L,robot(ball1,0,pos(XP,YP,ZP,_)),Jugadores),
 	Pelota = pos(XP,YP,ZP).
 
 analyze(S,Pelota,Jugadores,Estado):-
@@ -36,9 +36,9 @@ analyze(S,Pelota,Jugadores,Estado):-
 
 
 analize(S,L):-
-	salida(L,S,E),
+	salida(L,S,_E).
 %	estructurar(E,
-	display(E).
+%	display(E).
 	
 
 salida(Estado) --> init(Estado).

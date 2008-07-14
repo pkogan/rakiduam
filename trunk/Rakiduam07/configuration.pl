@@ -91,7 +91,7 @@ start:-
 	get_element_number(Terms,numplayers,NumP),
 	asserta_fact(get_numplayers(NumP)),
         assert_players(Terms),
-	assert_players_names(Terms),
+	assert_players_names,
 	assert_roles(Terms).
 
 
@@ -106,14 +106,16 @@ assert_players(Terms):-
 assert_players(_).
 
 
+assert_players_names:-
+	get_numplayers(N),
+	opt_assert_players_names(N,[]).
 
-assert_players_names(Terms) :-	
-	get_players_names(Terms,Nombre),
- 	current_fact(players_names(P)),
- 	set_fact(players_names([Nombre|P])),
-	fail.
-
-assert_players_names(_).
+opt_assert_players_names(0,L):-
+ 	set_fact(players_names(L)).
+opt_assert_players_names(N,L):-
+	get_player(Nombre,N,propio),
+	N1 is N - 1,
+	opt_assert_players_names(N1,[Nombre|L]).	
 
 assert_roles(Terms):-
 	get_all_roles(Terms,Nombre,Role),
