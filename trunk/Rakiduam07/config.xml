@@ -4,15 +4,13 @@
   </video_server>  
   <command_server hostname="10.0.10.10" port="8765">
   </command_server>  
-  <anchoArea>14</anchoArea>
-  <altoArea>31</altoArea>
-  <anchoAreaChica>6</anchoAreaChica>
-  <altoAreaChica>15.5</altoAreaChica>
-  <!-- <accionesPrev>[0,0,0,0,0,0,0,0,0,0]</accionesPrev> -->
-  <!-- <accionesProm>[0,0,0,0,0,0,0,0,0,0]</accionesProm> -->
-  <arco_alto X1="93.4259" Y1="33.9320" X2="93.4259" Y2="49.6801"> </arco_alto>
-  <arco_bajo X1="6.8118" Y1="33.9320" X2="6.8118" Y2="49.6801">  </arco_bajo>
-  <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
+  <anchoArea>900</anchoArea>
+  <altoArea>541</altoArea>
+  <anchoAreaChica>690</anchoAreaChica>
+  <altoAreaChica>222</altoAreaChica>
+  <arco_alto X1="2765" Y1="710" X2="2765" Y2="1350"> </arco_alto>
+  <arco_bajo X1="50" Y1="710" X2="50" Y2="1350">  </arco_bajo>
+  <field     X1="10" Y1="60" X2="2890" Y2="1862">  </field>
   <numplayers>1</numplayers>
   <players>
     <player  number="1" team="propio" role="prueba">blue1</player>
