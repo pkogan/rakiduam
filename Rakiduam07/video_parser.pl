@@ -64,7 +64,9 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I3,I4,Xs),{number_codes(X,Xs)},
 			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
 			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
-			  nextToken(I6,I7,Orientations),{number_codes(Orientation,Orientations)},
+			  nextToken(I6,I7,Orientations),
+			  {number_codes(Orientationr,Orientations),
+			   Orientation is Orientationr * 180/3.1416},
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY).
 			  
