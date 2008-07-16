@@ -1,4 +1,4 @@
-:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2,players_names/1],_).
+:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2,players_names/1, get_ball_id/1,get_ball_name/1,get_player_id/1],_).
 
 :- use_package(xml_path).
 :- use_package(pillow).
@@ -35,7 +35,7 @@ get_all_roles(Terms,Nombre,Role):-
  	atom_codes(Role,RoleStr).
 
 
-get_players(Terms,Nombre,Jug,Equipo):-
+get_player_data(Terms,Nombre,Jug,Equipo):-
 	Query = config::players::player@(val(number,JugS),val(team,EquipoS))::(NombreS),
 	xml_query(Query, Terms),
  	atom_codes(Nombre,NombreS),
@@ -62,7 +62,18 @@ get_coord(Terms,Elem,X1,Y1,X2,Y2):-
 	number_codes(X1,X1s),	
 	number_codes(X2,X2s),	
 	number_codes(Y1,Y1s),	
-	number_codes(Y2,Y2s).	
+	number_codes(Y2,Y2s).
+
+get_players_id(Terms,Id) :-
+	Query = config::players@(val(doraemon_id,IdS)),
+	xml_query(Query, Terms),
+	number_codes(Id,IdS).
+	
+get_ball_id_and_name(Terms,Id,Name) :-
+	Query = config::ball@(val(doraemon_id,IdS))::(NameS),
+	xml_query(Query, Terms),
+	number_codes(Id,IdS),	
+ 	atom_codes(Name,NameS).	
 
 start:-
 	fetch_xml(Terms),
@@ -92,13 +103,18 @@ start:-
 	asserta_fact(get_numplayers(NumP)),
         assert_players(Terms),
 	assert_players_names,
-	assert_roles(Terms).
+	assert_roles(Terms),
+	get_players_id(Terms,PlyId),
+	asserta_fact(get_player_id(PlyId)),
+	get_ball_id_and_name(Terms,BallId,BallName),
+	asserta_fact(get_ball_id(BallId)),
+	asserta_fact(get_ball_name(BallName)).
 
 
 players_names([]). 
 
 assert_players(Terms):-
-	get_players(Terms,Nombre,Jug,Equipo),
+	get_player_data(Terms,Nombre,Jug,Equipo),
 	asserta_fact(get_player(Nombre,Jug,Equipo)),
 % 	asserta_fact(players_names([Plyrs|Nombre])),
 	fail.
@@ -144,7 +160,10 @@ assert_roles(_).
 	get_numplayers/1,
 	get_player/3,
 	get_role/2,
-	players_names/1
+	players_names/1,
+	get_ball_id/1,
+	get_ball_name/1,
+	get_player_id/1
 	].
 
 
