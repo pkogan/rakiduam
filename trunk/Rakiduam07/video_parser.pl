@@ -23,8 +23,8 @@ analyze(S,Pelota,Jugadores,Estado):-
 	get_environment(real),
 	analize(S,L),
 	Estado = estado(0,0),
-	member(robot(ball1,0,pos(XP,YP,ZP,_)),L),
-	delete_non_ground(L,robot(ball1,0,pos(XP,YP,ZP,_)),Jugadores),
+	member(ball(Ball,pos(XP,YP,ZP)),L),
+	delete_non_ground(L,ball(Ball,pos(XP,YP,ZP)),Jugadores),
 	Pelota = pos(XP,YP,ZP).
 
 analyze(S,Pelota,Jugadores,Estado):-
@@ -44,19 +44,27 @@ analize(S,L):-
 salida(Estado) --> init(Estado).
 
 init(Estado) --> 
-						%nextLine(pos(1,1),I1),
+		%nextLine(pos(1,1),I1),
 	           firstline(N,pos(1,1),I1),
 		   nextLine(I1,I2),
 		   parseLines(N,I2,_O,Estado).
 %		   parseLine(I2,_O,Estado).
 
-firstline(N,I,O) --> nextToken(I,I1,Number), nextToken(I1,I2,_) , nextToken(I2,O,_) , {number_codes(N,Number) }.
+firstline(N,I,O) --> nextToken(I,I1,Number), 
+	nextToken(I1,I2,_), 
+	nextToken(I2,O,_), 
+	{number_codes(N,Number)}.
 
 parseLines(1,I,O,[Estado]) --> parseLine(I,O,Estado).
-parseLines(N,I,O,[Estado|Rest]) --> { N1 is N - 1 }, parseLine(I,I1,Estado) , parseLines(N1,I1,O,Rest).
+parseLines(N,I,O,[Estado|Rest]) --> 
+	{ N1 is N - 1 }, 
+	  parseLine(I,I1,Estado) , 
+	  parseLines(N1,I1,O,Rest).
 
 parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) --> 
-	                  nextToken(I,I1,_), 
+	                  nextToken(I,I1,ObjectTypeS), 
+			  {number_codes(ObjectType,ObjectTypeS),
+			  get_player_id(ObjectType)},
 			  nextToken(I1,I2,ObjectNameS),
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_player(ObjectName,Jug,Equipo)},
@@ -65,14 +73,28 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
 			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
 			  nextToken(I6,I7,Orientations),
-			  {number_codes(Orientationr,Orientations),
-			   Orientation is Orientationr * 180/3.1416},
+			  {number_codes(OrientationRad,Orientations),
+			   Orientation is OrientationRad * 180/3.14159265},
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY).
 			  
 
+parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) --> 
+	                  nextToken(I,I1,ObjectTypeS), 
+			  {number_codes(ObjectType,ObjectTypeS),get_ball_id(ObjectType)},
+			  nextToken(I1,I2,ObjectNameS),
+			         {atom_codes(ObjectName,ObjectNameS),
+				 get_ball_name(ObjectName)},
+			  nextToken(I2,I3,_Found),
+			  nextToken(I3,I4,Xs),{number_codes(X,Xs)},
+			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
+			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
+			  nextToken(I6,I7,_Orientation),
+			  nextToken(I7,I8,_VelocityX),
+			  nextToken(I8,O,_VelocityY).
 
-%funciones de parser in
+
+%funciones de parser in (simulado)
 next_line([],[],[]).
 next_line([32|C],[],C).
 next_line([10|C],[],C).
@@ -160,4 +182,30 @@ write_tienepelota(_):-
 %const long ANYONES_BALL = 0;
 %const long BLUE_BALL = 1;
 %const long YELLOW_BALL = 2;
+
+% Doraemon's Output
+
+% 7 6188 0.000290976
+% ; 7=#objects specified in config file. 
+% ; 6188=frame #.  
+% ; rest - time diff in sec between prev frame and this one
+% 1605.82 -708.394 1321.44
+% ; x, y, z coordinates of camera wrt the coordinate system you calibrated
+% ; you need these for 3d settings, but not for 2d worlds)
+% ; what follows now are a set of recognized objects for each item in the 
+% ; configuration file
+
+% 2 spot1 Found 1232.5 416.374 0 0 0 0
+% ; first digit - 0=car; 1=ball; 2=spot
+% ; then id; then Found/NoFnd, then X/Y/Z within coordinate system
+% ; (remember you laid down the 0,0 point when you set the rotation matrix)
+% ; next item is orientation in rads from the 0,0 coordinate of rotation matrix
+% ; last 2 are velocity in x and y dimensions, respectively, in mm/sec
+% 2 spot2 Found 1559.22 417.359 0 0 0 0
+% 2 spot3 Found 1260.55 812.189 0 0 0 0
+% 2 spot4 Found 902.726 1002.43 0 0 0 0
+% 2 spot5 Found 746.045 735.631 0 0 0 0
+% 1 ball1 Found 1677.99 1205.55 50 0 -2.75769 1.19908
+% 0 car54 Found 1783.53 873.531 100 2.63944 1.47684 -6.49056
+
 
