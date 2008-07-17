@@ -4,6 +4,7 @@
 :- use_module(library(file_utils)).
 :- use_module(doraemon_tokenizer).
 :- use_module(configuration).
+:- use_module(trigonometry,[ajuste_angulo/2,radians_to_degrees/2]).
 
 
 % main([File],Pelota,Jugadores):-
@@ -72,9 +73,10 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I3,I4,Xs),{number_codes(X,Xs)},
 			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
 			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
-			  nextToken(I6,I7,Orientations),
-			  {number_codes(OrientationRad,Orientations),
-			   Orientation is OrientationRad * 180/3.14159265},
+			  nextToken(I6,I7,OrientationS),
+			  {number_codes(OrientRad,OrientationS),
+			   radians_to_degrees(OrientRad,OrientDgr),
+			   ajuste_angulo(OrientDgr,Orientation)},
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY).
 			  
@@ -92,6 +94,8 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			  nextToken(I6,I7,_Orientation),
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY).
+
+
 
 
 %funciones de parser in (simulado)
