@@ -3,7 +3,7 @@
 :- use_module('socket_udp/socket_udp'). %para usar servidor udp
 :- use_module(library(strings)).
 :- use_module(library(lists)).
-:- use_module(video_parser).
+:- use_module(video_parser,[analyze/4]).
 
 :- comment(title, "Modulo Interfaz con el servidor de video").
 
