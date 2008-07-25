@@ -4,6 +4,7 @@
 :- use_module(library(file_utils)).
 :- use_module(doraemon_tokenizer).
 :- use_module(configuration).
+:- use_module(ambiente,[pelota_anterior/3,jugador_prev/1]).
 :- use_module(trigonometry,[ajuste_angulo/2,radians_to_degrees/2]).
 
 
@@ -69,16 +70,27 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I1,I2,ObjectNameS),
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_player(ObjectName,Jug,Equipo)},
-			  nextToken(I2,I3,_Found),
-			  nextToken(I3,I4,Xs),{number_codes(X,Xs)},
-			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
-			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
+			  nextToken(I2,I3,Found),
+			  nextToken(I3,I4,Xs),
+			  nextToken(I4,I5,Ys),
+			  nextToken(I5,I6,Zs),
 			  nextToken(I6,I7,OrientationS),
-			  {number_codes(OrientRad,OrientationS),
-			   radians_to_degrees(OrientRad,OrientDgr),
-			   ajuste_angulo(OrientDgr,Orientation)},
 			  nextToken(I7,I8,_VelocityX),
-			  nextToken(I8,O,_VelocityY).
+			  nextToken(I8,O,_VelocityY),
+			  {
+			      (
+				  Found=='found' ->
+				  number_codes(X,Xs),
+				  number_codes(Y,Ys),
+				  number_codes(Z,Zs),
+				  number_codes(OrientRad,OrientationS),
+				  radians_to_degrees(OrientRad,OrientDgr),
+				  ajuste_angulo(OrientDgr,Orientation)
+			      ;
+				  jugador_prev(robot(Equipo,Jug,pos(X,Y,Z,Orientation)))
+			      )
+				  
+			   }.
 			  
 
 parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) --> 
@@ -88,13 +100,22 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_ball_name(ObjectName)},
 			  nextToken(I2,I3,_Found),
-			  nextToken(I3,I4,Xs),{number_codes(X,Xs)},
-			  nextToken(I4,I5,Ys),{number_codes(Y,Ys)},
-			  nextToken(I5,I6,Zs),{number_codes(Z,Zs)},
+			  nextToken(I3,I4,Xs),
+			  nextToken(I4,I5,Ys),
+			  nextToken(I5,I6,Zs),
 			  nextToken(I6,I7,_Orientation),
 			  nextToken(I7,I8,_VelocityX),
-			  nextToken(I8,O,_VelocityY).
-
+			  nextToken(I8,O,_VelocityY),
+			  {
+			      (
+				  Found=='found' ->
+				  number_codes(X,Xs),
+				  number_codes(Y,Ys),
+				  number_codes(Z,Zs)
+			      ;
+				  pelota_anterior(X,Y,Z)
+			      )
+			  }.
 
 
 

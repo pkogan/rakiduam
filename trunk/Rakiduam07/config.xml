@@ -14,7 +14,6 @@
   <numplayers>1</numplayers>
   <players doraemon_id="2" >
     <player  number="1" team="propio" role="prueba">blue1</player>
-    <player  number="0" team="ball1" >ball1</player>
   </players>
   <ball doraemon_id="1">ball1</ball>
 </config>
