@@ -99,7 +99,7 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			  nextToken(I1,I2,ObjectNameS),
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_ball_name(ObjectName)},
-			  nextToken(I2,I3,_Found),
+			  nextToken(I2,I3,Found),
 			  nextToken(I3,I4,Xs),
 			  nextToken(I4,I5,Ys),
 			  nextToken(I5,I6,Zs),
