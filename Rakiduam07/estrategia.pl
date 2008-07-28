@@ -120,10 +120,46 @@ comportamiento(Jugador,Iz,De):-
 	accion(Rol,Robot,Iz,De).
 	%set_fact(behavior(Jugador,Iz,De)).
 
-% El arquero se resuelve  con el predicado atajar
+punto(1060,1445).
+
+accion(prueba1,robot(propio,_,pos(Xr,Yr,_Zr,_R)),0,0) :-
+%	Xa1 is Xr-300,
+%	Xa2 is Xr+300,
+%	Ya1 is Yr-300,
+%	Ya2 is Yr+300,
+%        pelota_entre(Xa1,Ya1,Xa2,Ya2),
+ 	punto(X,Y),
+	distancia((Xr,Yr),(X,Y),D),
+	D<250.
+
+
+accion(prueba1,Robot,Iz,De) :-
+%	pelota_pred(X,Y,_Z),
+	punto(X,Y),
+	ir_a_posicion(Robot,X,Y,Iz,De).
+
+
+
+accion(prueba,R,125,-125) :-
+	jugador_prev(R).
+
+
+accion(prueba,robot(propio,_,pos(Xr,Yr,_Zr,_R)),125,0) :-
+	Xa1 is Xr-150,
+	Xa2 is Xr+150,
+	Ya1 is Yr-150,
+	Ya2 is Yr+150,
+        pelota_entre(Xa1,Ya1,Xa2,Ya2).
+
+
 accion(prueba,Robot,Iz,De) :-
 	pelota_pred(X,Y,_Z),
 	ir_a_posicion(Robot,X,Y,Iz,De).
+
+
+accion(puntor,Robot,Iz,De) :-
+	pelota_pred(X,Y,_Z),
+	apuntar_a_posicion(Robot,X,Y,Iz,De).
 
 accion(arquero,Robot,Iz,De):-
 	atajar(arquero,Robot,Iz,De).
@@ -166,6 +202,8 @@ accion(jugador,Robot,Iz,De):-
 %en caso que no se cumpla ninguna de las anteriores juega de líbero
 accion(jugador,Robot,Iz,De):-
 	libero(Robot,Iz,De).
+
+
 
 
 % tratar el tema del not
@@ -566,3 +604,4 @@ area('defensor_izquierdo',X1,Y1,X2,Y2):-
  
 objetivo(_Rol,X,Y):- 
 	centro_arco_contrario(X,Y).
+

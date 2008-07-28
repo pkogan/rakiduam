@@ -79,7 +79,7 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I8,O,_VelocityY),
 			  {
 			      (
-				  Found=='found' ->
+				  Found=="Found" ->
 				  number_codes(X,Xs),
 				  number_codes(Y,Ys),
 				  number_codes(Z,Zs),
@@ -108,7 +108,7 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			  nextToken(I8,O,_VelocityY),
 			  {
 			      (
-				  Found=='found' ->
+				  Found=="Found" ->
 				  number_codes(X,Xs),
 				  number_codes(Y,Ys),
 				  number_codes(Z,Zs)

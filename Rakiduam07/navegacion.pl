@@ -17,10 +17,11 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(navegacion,[ir_a_posicion/5,gira/5,resolver/4,ir_a_posicion_y_apuntar/6,calcular_angulo/4], [assertions]).
+:- module(navegacion,[ir_a_posicion/5,gira/5,resolver/4,ir_a_posicion_y_apuntar/6,calcular_angulo/4,apuntar_a_posicion/5], [assertions]).
 :- use_module(ambiente).
 :- use_module(logger).
 :- use_module(trigonometry,[atan2/3,ajuste_angulo/2]).
+:- use_module(configuration,[get_environment/1]).
 
 :- comment(title, "Modulo navegacion").
 
@@ -90,9 +91,14 @@ diferencia_angular(Alfa, Beta, Diferencia):-
 error_angular(_Distancia,5).
 
 distancia_cero(Distancia):-
-	Distancia =< (1).
+	get_environment(real),
+	Distancia =< (250). %tuning
 
-calcular_potencia(_Distancia,100).
+distancia_cero(Distancia):-
+	get_environment(simulado),
+	Distancia =< (5). 
+
+calcular_potencia(_Distancia,60).
 
 
 :- pred ir_a_posicion(+Xr,+Yr,+Rr,+X,+Y,+Vc,-Vi,-Vd) :: int * int * int * int * int * int * int * int 
