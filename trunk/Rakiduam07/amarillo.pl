@@ -63,7 +63,7 @@ main:-
 
 
 
-%% la función juego repite hasta que se apriete ^C
+%% l función juego repite hasta que se apriete ^C
 %% con la función recibirVS recibe en Estado el estado actual del ambiente
 %% con la función estrategia resulve la acción a realizar en base al Estado actual
  %% con la función sendCS se envía la acción al servidor de comandos
