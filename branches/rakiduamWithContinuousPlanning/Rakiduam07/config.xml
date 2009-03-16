@@ -1,0 +1,22 @@
+<config>
+  <environment>real</environment>
+  <video_server hostname="10.0.10.10" port="6363">
+  </video_server>  
+  <command_server hostname="10.0.10.10" port="8765">
+  </command_server>  
+  <anchoArea>900</anchoArea>
+  <altoArea>541</altoArea>
+  <anchoAreaChica>690</anchoAreaChica>
+  <altoAreaChica>222</altoAreaChica>
+  <arco_alto X1="2785" Y1="682" X2="2785" Y2="1343"> </arco_alto>
+  <arco_bajo X1="339" Y1="682" X2="331" Y2="1343">  </arco_bajo>
+  <field     X1="215" Y1="75" X2="2952" Y2="1870">  </field>
+  <numplayers>3</numplayers>
+  <players doraemon_id="0" >
+    <player  number="1" team="propio" role="prueba1">blue1</player>
+    <player  number="2" team="propio" role="prueba">blue2</player>
+    <player  number="3" team="propio" role="prueba">blue3</player>
+<!--     <player  number="2" team="propio" role="puntor">blue2</player> -->
+  </players>
+  <ball doraemon_id="1">ball1</ball>
+</config>
