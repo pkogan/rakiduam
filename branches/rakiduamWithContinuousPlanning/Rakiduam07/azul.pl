@@ -21,13 +21,13 @@
 %% módulo principal de la estrategia del equipo azul
 :- use_module(library(concurrency)).
 
-:- use_module(sim_video_server_tcp).
+:- use_module(sim_video_server_tcp,[iniciarVS/3,recibirVS/2,nuevo_juego/2]).
 %% módulo de conexión con el servidor de video
-:- use_module(sim_command_server).
+:- use_module(sim_command_server, [sendCS/2]).
 %% módulo de conexión con el servidor de comandos
-:- use_module(estrategia).
+:- use_module(estrategia,[iniciar/1,estrategia/2]).
 %% módulo para gestión de logs
-:- use_module(logger).
+:- use_module(logger,[iniciarLog/2, escribirLog/3]).
 %% modulo para gestion de datos de ambiente
 %:- use_module(ambiente).  
 :- use_module(configuration,[get_video_port/1,get_video_host/1]).

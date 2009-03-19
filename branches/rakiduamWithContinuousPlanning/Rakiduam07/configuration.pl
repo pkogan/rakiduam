@@ -1,4 +1,25 @@
-:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2,players_names/1, get_ball_id/1,get_ball_name/1,get_player_id/1],_).
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    % Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya		    %
+    % 									    %
+    % This file is part of Rakiduam.					    %
+    % 									    %
+    % Rakiduam is free software; you can redistribute it and/or modify	    %
+    % it under the terms of the GNU General Public License as published by  %
+    % the Free Software Foundation; either version 3 of the License, or	    %
+    % (at your option) any later version.				    %
+    % 									    %
+    % Rakiduam is distributed in the hope that it will be useful,	    %
+    % but WITHOUT ANY WARRANTY; without even the implied warranty of	    %
+    % MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the	    %
+    % GNU General Public License for more details.			    %
+    % 									    %
+    % You should have received a copy of the GNU General Public License	    %
+    % along with this program.  If not, see <http://www.gnu.org/licenses/>. %
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+:- module(configuration,[get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_arco_alto/4,get_arco_bajo/4,get_field/4,get_environment/1,get_video_host/1,get_video_port/1,get_command_host/1,get_command_port/1,get_numplayers/1,get_player/3,get_role/2,players_names/1, get_ball_id/1,get_ball_name/1,get_player_id/1],[assertions]).
 
 :- use_package(xml_path).
 :- use_package(pillow).
@@ -6,8 +27,18 @@
 
 :- initialization(start).
 
+:- comment(title, "Configuration module ").
+
+:- comment(author, "Mario Moya").
+
+:- comment(module, "Esté módulo lee los datos parametrizables de un
+	archivo externo XML, e inserta en la base de conocimientos los
+	predicados con sus valores, que luego serán consultados por el
+	resto de los módulos").
+
 
 xml_file('config.xml').
+
 
 
 fetch_xml(Terms) :-
