@@ -20,7 +20,8 @@
 
 :- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4,cancha/4,ancho_area/1,alto_area/1,ancho_area_chica/1,alto_area_chica/1].
 
-:-use_module(configuration).
+:-use_module(configuration,[get_arco_alto/4,get_arco_bajo/4,get_field/4,get_anchoArea/1,get_altoArea/1,get_anchoAreaChica/1,get_altoAreaChica/1,get_numplayers/1]).
+:-use_module(perceptions,[assert_perceptions/0]).
 
 :- comment(title, "Modulo ambiente").
 
@@ -75,7 +76,9 @@ iniciar_ambiente(azul):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	assert_perceptions.
+
 
 iniciar_ambiente(amarillo):-
 	get_arco_alto(X1,Y1,X2,Y2),
@@ -95,7 +98,8 @@ iniciar_ambiente(amarillo):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	assert_perceptions.
 
 
 iniciar_ambiente(_):-
@@ -117,7 +121,9 @@ iniciar_ambiente(_):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	assert_perceptions.
+
 
 
 

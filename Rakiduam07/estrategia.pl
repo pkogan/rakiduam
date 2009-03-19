@@ -29,8 +29,8 @@
 %% módulo para gestión de logs
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
-:- use_module(ambiente).
-:- use_module(configuration).
+:- use_module(ambiente,[iniciar_ambiente/1,insertar_estado/1,insertar_accion/1,jugador/1,distancia/3,jugador_prev/1,pelota_entre/4,pelota_pred/3,pelota_pred/3,pelota_entre/4,mas_cercanos/2,medio_cancha/2,mas_cercanos_lugar/4,atascado2/1,atascado/1,robot_entre/5,pelota_pred/3,cancha/4,mas_cercano/1,pelota_en_direccion_a_zona/6,largo_cancha/1,arco_propio/4,arco_contrario/4,cancha/4,medio_cancha/2,alto_area/1,mas_cercanos2/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,ancho_cancha/1]).
+:- use_module(configuration,[players_names/1,get_player/3,get_role/2]).
 
 :- comment(title, "Modulo estrategia").
 :- comment(author, "Pablo Kogan").
