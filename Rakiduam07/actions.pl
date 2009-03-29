@@ -19,7 +19,7 @@
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-:- module(actions,[execute_action/3],[assertions]).
+:- module(actions,[execute_action/3,insert_action_to_strategy/5],[assertions]).
 
 :-use_module(ambiente,[pelota_pred/3,cancha/4,largo_cancha/1,arco_propio/4,arco_contrario/4,robot_entre/5,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1]).
 :-use_module(configuration,[get_player/3,get_ball_name/1]).
@@ -93,6 +93,21 @@ execute_action(kick(P,Obj,cell(FromCol,FromRow),cell(ToCol,ToRow)), Vi,Vd) :-
 	Yf < Yt,
 	gira(Vi,Vd,100,to_right,200).
 
+
+% Reemplaza la accion, es decir las velocidades de un jugador
+% en una lista de velocidades por las que se envian por parametro:
+%   insert_action_to_strategy(Vl,Vr,N,Olist,NList).
+%   Vl y Vr son las nuevas velocidades
+%   N es el número de jugador (o el indice de donde hay que reemplazar)
+%   Olist es la lista de velocidades original
+%   NList es la lista de velocidades modificada, reemplazando
+%   los elementos que estaban el la posicion N*2 de la lista original
+%   por Vl y Vr.  
+insert_action_to_strategy(Vl,Vr,1,[_,_|R],[Vl,Vr|R]).
+
+insert_action_to_strategy(Vl,Vr,N,[An,Bn|R],[An,Bn|NL]):-
+	N1 is N-1,
+	insert_action_to_strategy(Vl,Vr,N1,R,NL).
 
 	
 sentido(Signo):- %Signo =1 si es azul =-1 si es amarillo.
