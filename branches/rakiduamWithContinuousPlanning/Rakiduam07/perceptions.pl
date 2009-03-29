@@ -18,13 +18,14 @@
     % along with this program.  If not, see <http://www.gnu.org/licenses/>. %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(perceptions,[assert_perceptions/0],[assertions]).
+:- module(perceptions,[assert_perceptions/0,get_perceptions/1],[assertions]).
 
-:-use_module(ambiente,[pelota_pred/3,jugador/1]).
-:-use_module(configuration,[get_player/3,get_ball_name/1]).
-:-use_module(field_grid,[subfield_center/4,point_to_cell_position/4]).
+:- use_module(ambiente,[pelota_pred/3,jugadores_propios/1,jugador/1]).
+:- use_module(configuration,[get_player/3,get_ball_name/1]).
+:- use_module(field_grid,[subfield_center/4,point_to_cell_position/4]).
+:- use_module(library(lists)).
 
-:- data [carrying/2,waiting_at/2].
+:- data [perceptions/1].
 
 :- comment(title, "Primitive perceptions module ").
 
@@ -40,11 +41,35 @@
 
 konstant(10).
 
+% :- pred assert_perception 
+% 	# "Calcula la lista de percepciones y lo agrega a la base de conocimientos"
 assert_perceptions :-
-	assert_carrying_ball,
-	assert_waiting_at.
+	jugadores_propios(J),
+	get_waiting_at_list(J,Wa),
+	get_carrying_ball(Cb),
+	append(Wa,[Cb],Plist),
+	asserta_fact(perceptions(Plist)).
 
-assert_carrying_ball :-
+assert_perceptions :-
+	jugadores_propios(J),
+	get_waiting_at_list(J,Wa),
+	asserta_fact(perceptions(Wa)).
+
+% :- pred assert_perception : list
+% 	# "Calcula la lista de percepciones y lo devuelve en el parámetro"
+get_perceptions(PList):-
+	jugadores_propios(J),
+	get_waiting_at_list(J,Wa),
+	get_carrying_ball(Cb),
+	append(Wa,[Cb],PList).
+
+get_perceptions(Wa) :-
+	jugadores_propios(J),
+	get_waiting_at_list(J,Wa).
+
+
+
+get_carrying_ball(carrying(P,Ball)) :-
 	pelota_pred(Xb,Yb,_),
 	konstant(K),
 	jugador(robot(propio,Number,pos(Xr,Yr))),
@@ -53,29 +78,20 @@ assert_carrying_ball :-
 	Yr>Yb-K,
 	Yr<Yb+K,
 	get_ball_name(Ball),
-	get_player(P,Number,propio),
-	retractall_fact(carrying(_,_)),
-	asserta_fact(carrying(P,Ball)).
-	
-assert_carrying_ball :-
-	retractall_fact(carrying(_,_)).
+	get_player(P,Number,propio).
 
-
-assert_waiting_at :-
-	get_player(P,Number,propio),
-	jugador(robot(propio,Number,pos(Xr,Yr))),
-	get_in_field_position(Xr,Yr,FieldCell),
-	asserta_fact(waiting_at(P,FieldCell)),
-	fail.
-
-assert_waiting_at.
 
 get_in_field_position(X,Y,cell(C1,R1)) :-
 	point_to_cell_position(X,Y,C1,R1).
 	
 
-% jugador(robot(propio,1,pos(30,30))).
-% jugador(robot(propio,2,pos(60,60))).
-% jugador(robot(propio,3,pos(70,70))).
+get_waiting_at_list([],[]).
+ 
+get_waiting_at_list([jugador(robot(propio,Number,pos(Xr,Yr)))|Tail],
+	[waiting_at(P,FieldCell)|L]) :-
+	get_player(P,Number,propio),
+	get_in_field_position(Xr,Yr,FieldCell),
+	get_waiting_at_list(Tail,L).
+
 
 
