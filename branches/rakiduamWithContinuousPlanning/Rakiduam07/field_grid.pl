@@ -18,7 +18,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :-module(field_grid,[subfield_center/4,point_to_cell_position/4],[assertions]).
 %:-use_module(configuration).
-%:-use_module(ambiente,[largo_cancha/1,ancho_cancha/1]).
+:-use_module(ambiente,[largo_cancha/1,ancho_cancha/1]).
 
 :- comment(title, "Field grid module ").
 
@@ -33,8 +33,8 @@
 %no deberian ser hechos.
 number_of_rows(3).
 number_of_columns(3).
-largo_cancha(120).
-ancho_cancha(80).
+% largo_cancha(89).
+% ancho_cancha(71).
 
 
 :- pred cell_with(-Width) :: int 

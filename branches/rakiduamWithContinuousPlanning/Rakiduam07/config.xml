@@ -36,10 +36,10 @@
   <field     X1="6.8118" Y1="6.3730" X2="93.4259" Y2="77.2392">  </field>
   <numplayers>5</numplayers>
   <players>
-    <player  number="5" team="propio" role="jugador">kechu</player>
-    <player  number="4" team="propio" role="jugador">meli</player>
-    <player  number="3" team="propio" role="jugador">küla</player>
-    <player  number="2" team="propio" role="jugador">epu</player>
+    <player  number="5" team="propio" role="quieto">kechu</player>
+    <player  number="4" team="propio" role="quieto">meli</player>
+    <player  number="3" team="propio" role="prueba">kula</player>
+    <player  number="2" team="propio" role="quieto">epu</player>
     <player  number="1" team="propio" role="arquero">kiñe</player>
     <player  number="5" team="contrario" >spot5</player>
     <player  number="4" team="contrario" >spot4</player>
