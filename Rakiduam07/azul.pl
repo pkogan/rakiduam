@@ -10,7 +10,7 @@
 %
 %     Rakiduam is distributed in the hope that it will be useful,
 %     but WITHOUT ANY WARRANTY; without even the implied warranty of
-%     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%     MERCHANTABILITY or FITNCSS FOR A PARTICULAR PURPOSE.  See the
 %     GNU General Public License for more details.
 %
 %     You should have received a copy of the GNU General Public License
@@ -20,17 +20,17 @@
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 :- use_module(library(concurrency)).
-
-:- use_module(sim_video_server_tcp).
+:- use_module(sim_video_server_linux).
+%:- use_module(sim_video_server_tcp).
 %% módulo de conexión con el servidor de video
-:- use_module(sim_command_server).
+:- use_module(command_server).
 %% módulo de conexión con el servidor de comandos
 :- use_module(estrategia).
 %% módulo para gestión de logs
 :- use_module(logger).
 %% modulo para gestion de datos de ambiente
 %:- use_module(ambiente).  
-:- use_module(configuration,[get_video_port/1,get_video_host/1]).
+:- use_module(configuration,[get_video_port/1,get_video_host/1,get_command_port/1,get_command_host/1]).
 
 :- comment(title, "Equipo de Futbol con Robots").
 
@@ -48,14 +48,16 @@
 
 :- pred  main # "El predicado main inicializa el servidor de comandos y el servidor de video e inicializa el juego.".
 main:-
-	get_video_port(Puerto),
-	get_video_host(Host),
-	iniciarVS(Host,Puerto,VideoServer), %'192.168.0.3',6363,VideoServer), %
-
-%	iniciarCS('localhost',6364,CommandServer), %'192.168.0.3',6364,CommandServer), %
+	get_video_port(PuertoV),
+	get_video_host(HostV),
+	iniciarVS(HostV,PuertoV,VideoServer), %'192.168.0.3',6363,VideoServer), %
+	get_command_port(PuertoC),
+	get_command_host(HostC),
+	iniciarCS(HostC,PuertoC,CommandServer), %'192.168.0.3',6364,CommandServer), %
 	iniciar(azul),
-        create_threads(10),
-	wait_for_connections(VideoServer).
+        % create_threads(10),
+	juego(VideoServer,CommandServer).   %udp claudio
+%	wait_for_connections(VideoServer).
 	
 
 %% la función juego repite hasta que se apriete ^C
@@ -68,20 +70,22 @@ juego(VideoServer,CommandServer):-
 	   recibirVS(VideoServer,Estado),
 	   estrategia(Estado,ListaVelocidades),
 	   escribirLog(Archivo,Estado,ListaVelocidades),
+	   %display('enJuego'),nl,
 	   sendCS(CommandServer,ListaVelocidades),
 	   %display(ListaVelocidades),
 	fail. 
 
 %manejo de thread
 
+
 :- concurrent connection/1.
 
-wait_for_connections(Socket):-
-        repeat,
-        nuevo_juego(Socket, Stream),
-%        socket_buffering(Stream, read, _Old, unbuf),
-        assertz_fact(connection(Stream)),
-        fail.
+% wait_for_connections(Socket):-
+%         repeat,
+%         nuevo_juego(Socket, Stream),
+% %        socket_buffering(Stream, read, _Old, unbuf),
+%         assertz_fact(connection(Stream)),
+%         fail.
 
 create_threads(0).
 create_threads(N):-

@@ -1,4 +1,4 @@
-:- module(video_parser,[analyze/4],[dcg]).
+:- module(video_parser,[analyze/4],[dcg,assertions]).
 
 :- use_module(library(lists)).
 :- use_module(library(file_utils)).
@@ -7,19 +7,20 @@
 :- use_module(ambiente,[pelota_anterior/3,jugador_prev/1]).
 :- use_module(trigonometry,[ajuste_angulo/2,radians_to_degrees/2]).
 
-
+:- data[posicion_predic/2].
 % main([File],Pelota,Jugadores):-
 % 	file_to_string(File,S),
 % 	analize(S,L),
 % 	member(robot(pelota,0,pos(XP,YP,ZP,_)),L),
 % 	delete_non_ground(L,robot(pelota,0,pos(XP,YP,ZP,_)),Jugadores),
 % 	Pelota = pos(XP,YP,ZP).
-% %	close(Stream).
+%%	close(Stream).
 
 % Pelota = pos(X,Y,Z).
 % Jugadores = [robot(propio | contrario,NumeroJugador,pos(X,Y,Z,R)),...]
 
 
+posicion_predic(1568,980).
 
 analyze(S,Pelota,Jugadores,Estado):-
 	get_environment(real),
@@ -70,7 +71,7 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I1,I2,ObjectNameS),
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_player(ObjectName,Jug,Equipo)},
-			  nextToken(I2,I3,Found),
+			  nextToken(I2,I3,_Found),
 			  nextToken(I3,I4,Xs),
 			  nextToken(I4,I5,Ys),
 			  nextToken(I5,I6,Zs),
@@ -78,19 +79,13 @@ parseLine(I,O,robot(Equipo,Jug,pos(X,Y,Z,Orientation))) -->
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY),
 			  {
-			      (
-				  Found=="Found" ->
-				  number_codes(X,Xs),
-				  number_codes(Y,Ys),
-				  number_codes(Z,Zs),
-				  number_codes(OrientRad,OrientationS),
-				  radians_to_degrees(OrientRad,OrientDgr),
-				  ajuste_angulo(OrientDgr,Orientation)
-			      ;
-				  jugador_prev(robot(Equipo,Jug,pos(X,Y,Z,Orientation)))
-			      )
-				  
-			   }.
+			      number_codes(X,Xs),
+			      number_codes(Y,Ys),
+			      number_codes(Z,Zs),
+			      number_codes(OrientRad,OrientationS),
+			      radians_to_degrees(OrientRad,OrientDgr),
+			      ajuste_angulo(OrientDgr,Orientation)
+			  }.
 			  
 
 parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) --> 
@@ -99,7 +94,7 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			  nextToken(I1,I2,ObjectNameS),
 			         {atom_codes(ObjectName,ObjectNameS),
 				 get_ball_name(ObjectName)},
-			  nextToken(I2,I3,Found),
+			  nextToken(I2,I3,_Found),
 			  nextToken(I3,I4,Xs),
 			  nextToken(I4,I5,Ys),
 			  nextToken(I5,I6,Zs),
@@ -107,17 +102,66 @@ parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) -->
 			  nextToken(I7,I8,_VelocityX),
 			  nextToken(I8,O,_VelocityY),
 			  {
-			      (
-				  Found=="Found" ->
-				  number_codes(X,Xs),
-				  number_codes(Y,Ys),
-				  number_codes(Z,Zs)
-			      ;
-				  pelota_anterior(X,Y,Z)
-			      )
+			      number_codes(X,Xs),
+			      number_codes(Y,Ys),
+			      number_codes(Z,Zs)
 			  }.
 
 
+
+%parser de pelota que predice la posicion si no la encuentra el servidor de video
+%este es el caso en el que recibe Found del servidor.
+% parseLine(I,O,ball(ObjectName,pos(X,Y,Z))) --> 
+% 	                  nextToken(I,I1,ObjectTypeS), 
+% 			  {number_codes(ObjectType,ObjectTypeS),get_ball_id(ObjectType)},
+% 			  nextToken(I1,I2,ObjectNameS),
+% 			         {atom_codes(ObjectName,ObjectNameS),
+% 				 get_ball_name(ObjectName)},
+% 			  nextToken(I2,I3,Found),
+% 			  {Found = "Found"},
+% 			  nextToken(I3,I4,Xs),
+% 			  nextToken(I4,I5,Ys),
+% 			  nextToken(I5,I6,Zs),
+% 			  nextToken(I6,I7,_Orientation),
+% 			  nextToken(I7,I8,_VelocityX),
+% 			  nextToken(I8,O,_VelocityY),
+% 			  {
+% 			      number_codes(X,Xs),
+% 			      number_codes(Y,Ys),
+% 			      number_codes(Z,Zs),
+% 			      set_fact(posicion_predic(X,Y))
+% 			  }.
+
+% %Este es el caso en el que recibe Not Found del servidor. Entonces predice la posicion
+% %de la pelota en funcion de las velocidades anteriores en x e y y el tiempo entre frames
+% %66.67 es el tiempo entre frame y frame.
+% parseLine(I,O,ball(ObjectName,pos(Xn,Yn,Z))) --> 
+% 	                  nextToken(I,I1,ObjectTypeS), 
+% 			  {number_codes(ObjectType,ObjectTypeS),get_ball_id(ObjectType)},
+% 			  nextToken(I1,I2,ObjectNameS),
+% 			         {atom_codes(ObjectName,ObjectNameS),
+% 				 get_ball_name(ObjectName)},
+% 			  nextToken(I2,I3,Found),
+% 			  {Found = "NoFnd"},
+% 			  nextToken(I3,I4,_Xs),
+% 			  nextToken(I4,I5,_Ys),
+% 			  nextToken(I5,I6,Zs),
+% 			  nextToken(I6,I7,_Orientation),
+% 			  nextToken(I7,I8,VelocityX),
+% 			  nextToken(I8,O,VelocityY),
+% 			  {
+% 			      %number_codes(Xant,Xs),
+% 			      %number_codes(Yant,Ys),
+% 			      number_codes(Z,Zs),
+% 			      number_codes(Vx,VelocityX),
+% 			      number_codes(Vy,VelocityY),
+% 			      Dx is Vx*66.67,
+% 			      Dy is Vy*66.67,
+% 			      posicion_predic(Xant,Yant),
+% 			      Xn is Xant + Dx,
+% 			      Yn is Yant + Dy,
+% 			      set_fact(posicion_predic(Xn,Yn))
+% 			  }.
 
 %funciones de parser in (simulado)
 next_line([],[],[]).
