@@ -1,22 +1,27 @@
 <config>
   <environment>real</environment>
-  <video_server hostname="10.0.10.10" port="6363">
+  <video_server hostname="10.0.10.99" port="6363">
   </video_server>  
-  <command_server hostname="10.0.10.10" port="8765">
+  <command_server hostname="10.0.10.99" port="8765">
   </command_server>  
-  <anchoArea>900</anchoArea>
-  <altoArea>541</altoArea>
-  <anchoAreaChica>690</anchoAreaChica>
-  <altoAreaChica>222</altoAreaChica>
-  <arco_alto X1="2785" Y1="682" X2="2785" Y2="1343"> </arco_alto>
-  <arco_bajo X1="339" Y1="682" X2="331" Y2="1343">  </arco_bajo>
-  <field     X1="215" Y1="75" X2="2952" Y2="1870">  </field>
+  <anchoArea>140</anchoArea>
+  <altoArea>1500</altoArea>
+  <anchoAreaChica>70</anchoAreaChica>
+  <altoAreaChica>1100</altoAreaChica>
+  <arco_alto X1="2938" Y1="800" X2="3015" Y2="1172"> </arco_alto>
+  <arco_bajo X1="60" Y1="790" X2="136" Y2="1960">  </arco_bajo>
+  <field     X1="199" Y1="44" X2="2912" Y2="1915">  </field>
   <numplayers>3</numplayers>
   <players doraemon_id="0" >
-    <player  number="1" team="propio" role="prueba1">blue1</player>
-    <player  number="2" team="propio" role="prueba">blue2</player>
-    <player  number="3" team="propio" role="prueba">blue3</player>
-<!--     <player  number="2" team="propio" role="puntor">blue2</player> -->
+     <player  number="1" team="propio" role="evitar">blue1</player> 
+     <player  number="2" team="propio" role="arquero3">blue2</player>
+     <player  number="3" team="propio" role="delantero">blue3</player>
+     <player  number="4" team="contrario">yell1</player> 
+     <player  number="5" team="contrario">yell2</player>
+     <player  number="6" team="contrario">yell3</player>  
+<!--     <player  number="2" team="contrario" role="nada">blue4</player> -->
+<!--     <player  number="2" team="contrario" role="nada">blue5</player> -->
+<!--     <player  number="3" team="contrario" role="nada">blue6</player> -->
   </players>
-  <ball doraemon_id="1">ball1</ball>
+  <ball doraemon_id="1">ball0</ball>
 </config>

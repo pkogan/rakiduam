@@ -16,9 +16,9 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:-module(ambiente,[cancha/4,largo_cancha/1,ancho_cancha/1,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,insertar_estado/1,pelota/3,pelota_pred/3,pelota_en_direccion_a_zona/6,pelota_entre/4,robot_entre/5,atascado/1,atascado2/1,mas_cercano/1,mas_cercanos/2,mas_cercanos2/1,mas_cercanos_lugar/4,jugadores/1,jugadores_propios/1,estado/2,jugador/1,jugador_prev/1,insertar_accion/1,accion_prev/3,accion_prom/3,arco_propio/4,arco_contrario/4,iniciar_ambiente/1,pelota_anterior/3,distancia/3],[assertions]).
+:-module(ambiente,[cancha/4,largo_cancha/1,ancho_cancha/1,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,insertar_estado/1,pelota/3,pelota_pred/3,pelota_en_direccion_a_zona/6,pelota_entre/4,robot_entre/5,atascado/1,atascado2/1,mas_cercano/1,mas_cercanos/2,mas_cercanos2/1,mas_cercanos_lugar/4,jugadores/1,jugadores_propios/1,estado/2,jugador/1,jugador_prev/1,insertar_accion/1,accion_prev/3,accion_prom/3,arco_propio/4,arco_contrario/4,iniciar_ambiente/1,pelota_anterior/3,distancia/3,punto_intermedio/3,equipo/1],[assertions]).
 
-:- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4,cancha/4,ancho_area/1,alto_area/1,ancho_area_chica/1,alto_area_chica/1].
+:- data [pelota/3,pelota_anterior/3,jugadores/1,estado/2,jugadores_prev/1,estado_prev/2,acciones_prev/1,acciones_prom/1,atascado_robot/1,arco_propio/4,arco_contrario/4,cancha/4,ancho_area/1,alto_area/1,ancho_area_chica/1,alto_area_chica/1,equipo/1,posicion_predic/2].
 
 :-use_module(configuration).
 
@@ -57,6 +57,7 @@
 
 
 iniciar_ambiente(azul):-
+	set_fact(equipo(azul)),
 %arco azul  
 	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_propio(93.4259,33.9320,93.4259,49.6801)),
@@ -75,9 +76,12 @@ iniciar_ambiente(azul):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	medio_cancha(Xc,Yc),
+	asserta_fact(pelota_anterior(Xc,Yc,0)).
 
 iniciar_ambiente(amarillo):-
+	set_fact(equipo(amarillo)),
 	get_arco_alto(X1,Y1,X2,Y2),
 %asserta_fact(arco_contrario(93.4259,33.9320,93.4259,49.6801)),
 	asserta_fact(arco_contrario(X1,Y1,X2,Y2)),
@@ -95,7 +99,10 @@ iniciar_ambiente(amarillo):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	medio_cancha(Xc,Yc),
+	asserta_fact(pelota_anterior(Xc,Yc,0)).
+
 
 
 iniciar_ambiente(_):-
@@ -117,7 +124,10 @@ iniciar_ambiente(_):-
 	get_altoAreaChica(ALAC),
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
-	assert_actions_prev_prom(N).
+	assert_actions_prev_prom(N),
+	medio_cancha(Xc,Yc),
+	asserta_fact(pelota_anterior(Xc,Yc,0)).
+
 
 
 
@@ -167,6 +177,9 @@ medio_cancha(X,Y):-
 :- pred pelota_pred(-X,-Y,-Z) :: int * int * int
  # "Retorna la posicion predecida de la pelota en el punto (@var{X},@var{Y},@var{Z}), calculada en base a las dos ultimas posiciones de esta. La tercera ordenada @var{Z} no es utilizada.".
 
+% pelota_pred(X,Y,_):-
+% 	pelota(X,Y,_).
+
 pelota_pred(X,Y,_):-
 	pelota(Xball,Yball,_),
 	pelota_anterior(Xa,Ya,_),
@@ -188,10 +201,11 @@ insertar_estado([pos(Xball,Yball,Zball),Jugadores,estado(E1,E2)]):-
  	acciones_prev(Accion_Prev),
 	acciones_prom(Accion_Prom),
 	retractall_fact(acciones_prom(Accion_Prom)),
-	asserta_fact(acciones_prom([0,0,0,0,0,0,0,0,0,0])),
+	asserta_fact(acciones_prom([0,0,0,0,0,0])),
 	retractall_fact(acciones_prev(Accion_Prev)),
-	asserta_fact(acciones_prev([0,0,0,0,0,0,0,0,0,0])),
-	display('Modifico la posicion de la pelota, estado: '),display(E1),display(','),display(E2),display('.'),nl;
+	asserta_fact(acciones_prev([0,0,0,0,0,0]))
+%,	display('Modifico la posicion de la pelota, estado: '),display(E1),display(','),display(E2),display('.'),nl
+	;
 	    true), %si no se ha movido la pelota
 	(jugadores(J),
 	 retractall_fact(jugadores(J)),

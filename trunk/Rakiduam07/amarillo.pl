@@ -1,6 +1,5 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya, Claudio Vaucheret
-%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     Copyright 2007 Pablo Kogan, Guillermo Torres, Mario Moya, Claudio Vauchere
 %     This file is part of Rakiduam.
 %
 %     Rakiduam is free software; you can redistribute it and/or modify
@@ -62,7 +61,6 @@ main:-
 	
 
 
-
 %% l función juego repite hasta que se apriete ^C
 %% con la función recibirVS recibe en Estado el estado actual del ambiente
 %% con la función estrategia resulve la acción a realizar en base al Estado actual
@@ -71,9 +69,9 @@ juego(VideoServer,CommandServer):-
 	iniciarLog('estrategiaAmarillo.log',Archivo), 
 	repeat,
 	   recibirVS(VideoServer,Estado),
-	   display(Estado),nl,   
+%	   display(Estado),nl,   
 	   estrategia(Estado,ListaVelocidades),
-	   display(ListaVelocidades),nl,
+%	   display(ListaVelocidades),nl,
 	   escribirLog(Archivo,Estado,ListaVelocidades),
 	   sendCS(CommandServer,ListaVelocidades),
 	   %display(ListaVelocidades),

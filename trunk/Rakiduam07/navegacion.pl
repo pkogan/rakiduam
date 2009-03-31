@@ -17,7 +17,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(navegacion,[ir_a_posicion/5,gira/5,resolver/4,ir_a_posicion_y_apuntar/6,calcular_angulo/4,apuntar_a_posicion/5], [assertions]).
+:- module(navegacion,[ir_a_posicion/5,gira/5,resolver/4,ir_a_posicion_y_apuntar/6,calcular_angulo/4,apuntar_a_posicion/5,detener/2,apuntar_ir_a_posicion/5], [assertions]).
 :- use_module(ambiente).
 :- use_module(logger).
 :- use_module(trigonometry,[atan2/3,ajuste_angulo/2]).
@@ -88,16 +88,33 @@ diferencia_angular(Alfa, Beta, Diferencia):-
 	ajuste_angulo(Aux, Diferencia),!.
 
 
+
+apuntar_ir_a_posicion(robot('propio',Number,pos(Xr,Yr,_Z,Rr)), X,Y,Vi,Vd):-
+	calcular_angulo(robot('propio',Number,pos(Xr,Yr,_Z,Rr)),X,Y, Angulo),
+	diferencia_angular(Angulo, Rr, Diferencia),	
+	error_angular(0, Error),
+	abs(Diferencia) =< Error,
+	ir_a_posicion(robot('propio',Number,pos(Xr,Yr,_Z,Rr)),X,Y,Vi,Vd).
+
+
+apuntar_ir_a_posicion(robot('propio',Number,pos(Xr,Yr,_Z,_Rr)), X,Y,Vi,Vd):-
+	calcular_angulo(robot('propio',Number,pos(Xr,Yr,_Z,_Rr)),X,Y, Angulo),
+	apuntar(robot('propio',Number,pos(Xr,Yr,_Z,_Rr)),Angulo,Vi,Vd).
+
+
 error_angular(_Distancia,5).
 
 distancia_cero(Distancia):-
 	get_environment(real),
-	Distancia =< (250). %tuning
+	Distancia =< (100). %tuning
 
 distancia_cero(Distancia):-
 	get_environment(simulado),
 	Distancia =< (5). 
 
+
+% calcular_potencia(Distancia,100):-  Distancia =< 3000 , Distancia >= 2000. 
+% calcular_potencia(Distancia,80):- Distancia =< 1999 , Distancia >= 1000.  
 calcular_potencia(_Distancia,60).
 
 
@@ -130,17 +147,33 @@ avanzar(robot('propio',_Number,_Pos), Vi,Vd):-
 	Vi is 125,
 	Vd is 125.
 
+
 %Diferncial es re groso.
 %to right implica que se aplica el diferencial sobre la rueda derecha
-
 gira(Vl,Vr, Fuerza_de_giro, 'to_right', Diferencial):-
+	get_environment(simulado),
 	Potencia is (Fuerza_de_giro*125/100),
 	PotenciaDiferencial is ((Potencia * Diferencial)/100),
 	Vr is  truncate(Potencia - PotenciaDiferencial),
 	Vl is truncate(Potencia).
 %to left implica que se aplica el diferencial sobre la rueda izquieda
 gira(Vl,Vr, Fuerza_de_giro, 'to_left', Diferencial):-
+	get_environment(simulado),
+	Potencia is (Fuerza_de_giro*125/100),
+	PotenciaDiferencial is ((Potencia * Diferencial)/100),
+	Vl is  truncate(Potencia - PotenciaDiferencial),
+	Vr is truncate(Potencia).
 
+%to right implica que se aplica el diferencial sobre la rueda derecha
+gira(Vl,Vr, Fuerza_de_giro, 'to_right', Diferencial):-
+	get_environment(real),
+	Potencia is (Fuerza_de_giro*125/100),
+	PotenciaDiferencial is ((Potencia * Diferencial)/100),
+	Vr is  truncate(Potencia - PotenciaDiferencial),
+	Vl is truncate(Potencia).
+%to left implica que se aplica el diferencial sobre la rueda izquieda
+gira(Vl,Vr, Fuerza_de_giro, 'to_left', Diferencial):-
+	get_environment(real),
 	Potencia is (Fuerza_de_giro*125/100),
 	PotenciaDiferencial is ((Potencia * Diferencial)/100),
 	Vl is  truncate(Potencia - PotenciaDiferencial),
@@ -149,13 +182,13 @@ gira(Vl,Vr, Fuerza_de_giro, 'to_left', Diferencial):-
 
 %error_angular(0, 3).
 
-
+%cambie diferencial 200 por 100.
 %voy para la izquierda
 resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 	distancia_cero(Distancia),
 	error_angular(Distancia,Error),
 	Theta_e2>=Error , Theta_e2 < 90,
-	PotenciaDeGiro is Theta_e2/4,
+	PotenciaDeGiro is (Theta_e2),
 	Diferencial is 200,
 	gira(Vi,Vd,PotenciaDeGiro,'to_left',Diferencial).
 
@@ -164,14 +197,14 @@ resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 	distancia_cero(Distancia),
 	error_angular(Distancia,Error),
 	Theta_e2<(-Error) , Theta_e2 > (-90),
-	PotenciaDeGiro is Theta_e2*(-1)/4,
+	PotenciaDeGiro is Theta_e2*(-1),
 	Diferencial is 200,
 	gira(Vi,Vd,PotenciaDeGiro,'to_right',Diferencial).
 	
 resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 	distancia_cero(Distancia),
 	Theta_e2=<(-90),
-	PotenciaDeGiro is (Theta_e2+180)/4,
+	PotenciaDeGiro is (Theta_e2+180),
 	Diferencial is 200,
 	gira(Vi,Vd,PotenciaDeGiro,'to_right',Diferencial).
 
@@ -179,7 +212,7 @@ resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 resolver_apuntar(Theta_e2,Distancia,Vi,Vd):-
 	distancia_cero(Distancia),
 	Theta_e2>=90,
-	PotenciaDeGiro is abs(Theta_e2-180)/4,
+	PotenciaDeGiro is abs(Theta_e2-180),
 	Diferencial is 200,
 	gira(Vi,Vd,PotenciaDeGiro,'to_left',Diferencial).
 %-------------------------------------
@@ -198,14 +231,14 @@ resolver(Theta_e2,D_e,Vi,Vd):-
 	error_angular(D_e,Error),
 	Theta_e2>=Error , Theta_e2 < 90,
 	calcular_potencia(D_e,PotenciaDeGiro),
-	Diferencial is Theta_e2,
+	Diferencial is Theta_e2*1.5,
 	gira(Vi,Vd,PotenciaDeGiro,'to_left',Diferencial).
 %voy para la derecha
 resolver(Theta_e2,D_e,Vi,Vd):-
 	error_angular(D_e,Error),
 	Theta_e2=<(-Error) , Theta_e2 > (-90),
 	calcular_potencia(D_e,PotenciaDeGiro),
-	Diferencial is Theta_e2*(-1),
+	Diferencial is Theta_e2*(-1)*1.5,
 	gira(Vi,Vd,PotenciaDeGiro,'to_right',Diferencial).
 	
 	
@@ -213,7 +246,7 @@ resolver(Theta_e2,D_e,Vi,Vd):-
 	Theta_e2=<(-90),
 	calcular_potencia(D_e,Potencia),
 	PotenciaDeGiro is Potencia*(-1),
-	Diferencial is Theta_e2+180,
+	Diferencial is (Theta_e2+180)*1.5,
 	gira(Vi,Vd,PotenciaDeGiro,'to_right',Diferencial).
 
 %voy para la derecha
@@ -221,7 +254,7 @@ resolver(Theta_e2,D_e,Vi,Vd):-
 	Theta_e2>=90,
 	calcular_potencia(D_e,Potencia),
 	PotenciaDeGiro is Potencia*(-1),
-	Diferencial is abs(Theta_e2-180),
+	Diferencial is abs(Theta_e2-180)*1.5,
 	gira(Vi,Vd,PotenciaDeGiro,'to_left',Diferencial).
 	
 
