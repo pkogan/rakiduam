@@ -343,5 +343,6 @@ writelnw([H|T]) :- write(H), writeln(T).
 
 % For soccer
 % solve([waiting_at(ball,oppGoal)],P,7), seq(P,S).
+% solve([waiting_at(kula,cell(3,1))],P,2), seq(P,S).
 
 

@@ -59,6 +59,7 @@ adjacent(cell(1,2),cell(1,3)) <- [].
 adjacent(cell(1,2),cell(1,1)) <- [].
 adjacent(cell(1,3),cell(1,2)) <- [].
 %columna 2
+adjacent(cell(2,3),cell(3,3)) <- [].
 adjacent(cell(2,1),cell(2,2)) <- [].
 adjacent(cell(2,2),cell(2,3)) <- [].
 adjacent(cell(2,2),cell(2,1)) <- [].
@@ -76,7 +77,7 @@ adjacent(cell(1,2),cell(2,2)) <- [].
 adjacent(cell(2,2),cell(3,2)) <- [].
 %fila3
 adjacent(cell(1,3),cell(2,3)) <- [].
-adjacent(cell(2,3),cell(3,3)) <- [].
+%adjacent(cell(2,3),cell(3,3)) <- [].
 
 
 % adjacent(field1,field2) <- [].
@@ -104,12 +105,12 @@ adjacent(cell(2,3),cell(3,3)) <- [].
 % adjacent(field8,field6) <- [].
 % adjacent(field8,field7) <- [].
 
-player(rob) <- [].
+player(kula) <- [].
 
 inReach(cell(2,_),cell(3,_)) <- [].
 inReach(cell(2,_),cell(1,_)) <- [].
 inReach(cell(3,_),cell(2,_)) <- [].
-inReach(cell(3,_),oppGoal) <- [].
+inReach(cell(1,_),oppGoal) <- [].
 
 
 % inReach(field5,field6) <- [].
@@ -119,7 +120,7 @@ inReach(cell(3,_),oppGoal) <- [].
 
 
 % INITIAL SITUATION
-holds(waiting_at(rob,cell(1,3)),init).
-holds(waiting_at(ball,cell(1,2)),init).
+holds(waiting_at(kula,cell(3,3)),init).
+holds(waiting_at(ball,cell(2,2)),init).
 
 

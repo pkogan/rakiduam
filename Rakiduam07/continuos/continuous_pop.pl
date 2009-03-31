@@ -1,4 +1,5 @@
-:- module(continuous_pop,_,_).
+:- module(continuous_pop,_).
+%:- module(continuous_pop,[initialplan/1,continuouspop/2,perception/1,action/1,find_depth_bound/1]).
 :- use_module(pop,[solve/3,seq/2,solve_open_preconditions/3, add_these_preconds/4]).
 :- use_module(library(write)).
 :- use_module(library(lists)).
@@ -26,10 +27,8 @@
 %   action A1 means that A0 is making P true for A1.
 :- op(1200,xfx,[<-]).
 
-%:- data [holds/2].
 :- concurrent perception/1.
 :- concurrent action/1.
-%:- data action/1.
 :- data [perceptions/1,goals/1].
 
 action(noop).
@@ -51,6 +50,14 @@ initialplan(Plan):-
 	find_new_goals(Goals),
 	find_depth_bound(DB),
 	solve(Goals,Plan,DB).
+
+initialplan_seq(Plan,Seq):-
+	find_new_goals(Goals),
+	find_depth_bound(DB),
+	solve(Goals,Plan,DB),
+	seq(Plan,Seq).
+
+
 controlador:- 
 	get_perceptions(Percepts),
 	assertz_fact(perception(Percepts)),
