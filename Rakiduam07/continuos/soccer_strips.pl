@@ -8,7 +8,7 @@
 % ACTIONS
 % move(Ag,Pos,Pos_1) is the action of Ag moving from Pos to Pos_1
 preconditions(move(Ag,Pos,Pos_1),
-    [player(Ag), adjacent(Pos,Pos_1), waiting_at(Ag,Pos)]).
+    [player(Ag), waiting_at(Ag,Pos), adjacent(Pos,Pos_1)]).
 
 %una posible mejora es hacer waiting para Ag, y ball_at para Obj
 %hacer que kick patee a otra posicion.
@@ -50,34 +50,43 @@ at(Obj,Pos) <-
 at(Obj,Pos) <-
    [player(Ag), Ag \= Obj, carrying(Ag,Obj), at(Ag,Pos)].
 
-%adjacent(cell(C,R1),cell(C,R2)) <- [1 is abs(R1-R2)].
-%adjacent(cell(C1,R),cell(C2,R)) <- [1 is abs(C1-C2)].
+% adjacent(cell(C,R1),cell(C,R2)) <- [1 is abs(R1-R2)].
+% adjacent(cell(C1,R),cell(C2,R)) <- [1 is abs(C1-C2)].
 
 %columna 1
 adjacent(cell(1,1),cell(1,2)) <- [].
-adjacent(cell(1,2),cell(1,3)) <- [].
+adjacent(cell(1,1),cell(2,1)) <- [].
+
 adjacent(cell(1,2),cell(1,1)) <- [].
+adjacent(cell(1,2),cell(1,3)) <- [].
+adjacent(cell(1,2),cell(2,2)) <- [].
+
 adjacent(cell(1,3),cell(1,2)) <- [].
+adjacent(cell(1,3),cell(2,3)) <- [].
 %columna 2
-adjacent(cell(2,3),cell(3,3)) <- [].
+adjacent(cell(2,1),cell(3,1)) <- [].
 adjacent(cell(2,1),cell(2,2)) <- [].
+adjacent(cell(2,1),cell(1,1)) <- [].
+
+adjacent(cell(2,2),cell(3,2)) <- [].
 adjacent(cell(2,2),cell(2,3)) <- [].
 adjacent(cell(2,2),cell(2,1)) <- [].
+adjacent(cell(2,2),cell(1,2)) <- [].
+
+adjacent(cell(2,3),cell(3,3)) <- [].
+adjacent(cell(2,3),cell(1,3)) <- [].
 adjacent(cell(2,3),cell(2,2)) <- [].
+
 %columna3
 adjacent(cell(3,1),cell(3,2)) <- [].
+adjacent(cell(3,1),cell(2,1)) <- [].
+
 adjacent(cell(3,2),cell(3,3)) <- [].
 adjacent(cell(3,2),cell(3,1)) <- [].
+adjacent(cell(3,2),cell(2,2)) <- [].
+
 adjacent(cell(3,3),cell(3,2)) <- [].
-%fila1
-adjacent(cell(1,1),cell(2,1)) <- [].
-adjacent(cell(2,1),cell(3,1)) <- [].
-%fila2
-adjacent(cell(1,2),cell(2,2)) <- [].
-adjacent(cell(2,2),cell(3,2)) <- [].
-%fila3
-adjacent(cell(1,3),cell(2,3)) <- [].
-%adjacent(cell(2,3),cell(3,3)) <- [].
+adjacent(cell(3,3),cell(2,3)) <- [].
 
 
 % adjacent(field1,field2) <- [].
@@ -107,9 +116,9 @@ adjacent(cell(1,3),cell(2,3)) <- [].
 
 player(kula) <- [].
 
-inReach(cell(2,_),cell(3,_)) <- [].
-inReach(cell(2,_),cell(1,_)) <- [].
-inReach(cell(3,_),cell(2,_)) <- [].
+% inReach(cell(2,_),cell(3,_)) <- [].
+% inReach(cell(2,_),cell(1,_)) <- [].
+% inReach(cell(3,_),cell(2,_)) <- [].
 inReach(cell(1,_),oppGoal) <- [].
 
 
