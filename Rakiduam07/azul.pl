@@ -121,9 +121,9 @@ getPlannedAction(Act,Lv,Rv):-
 	assertz_fact(perception(Percepts)),
 	retract_fact(action(Act)),
 	execute_action(Act,Lv,Rv),
-	display(Act), nl.
+	display(Act), nl,!.
 
-getPlannedAction(noop,0,0).
+%getPlannedAction(noop,0,0).
 
 :- concurrent connection/1.
 

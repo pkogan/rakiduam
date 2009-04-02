@@ -98,7 +98,7 @@ distancia_cero(Distancia):-
 	get_environment(simulado),
 	Distancia =< (5). 
 
-calcular_potencia(_Distancia,60).
+calcular_potencia(_Distancia,100).
 
 
 :- pred ir_a_posicion(+Xr,+Yr,+Rr,+X,+Y,+Vc,-Vi,-Vd) :: int * int * int * int * int * int * int * int 
@@ -107,13 +107,13 @@ calcular_potencia(_Distancia,60).
 %Devuelve la velocidad en cada rueda Vi Vd para que el robot ubicado en Xr,Yr y rotación Rr
 %se dirija a la posición X,Y destino
 
-ir_a_posicion(robot('propio',_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,0,0) :-
+ir_a_posicion(robot(propio,_Number,pos(Xr,Yr,_Z,_Rr)), X,Y,0,0) :-
 	Dx is X-Xr,
 	Dy is Y-Yr,
 	Distancia is sqrt(Dx**2 + Dy**2), % pitáagoras distancia al objetivo (X,Y)
 	distancia_cero(Distancia).
 
-ir_a_posicion(robot('propio',_Number,pos(Xr,Yr,_Z,Rr)), X,Y,Vi,Vd) :-
+ir_a_posicion(robot(propio,_Number,pos(Xr,Yr,_Z,Rr)), X,Y,Vi,Vd) :-
 	Dx is X-Xr,
 	Dy is Y-Yr,
 	D_e is sqrt(Dx**2 + Dy**2), % pitáagoras distancia al objetivo (X,Y)

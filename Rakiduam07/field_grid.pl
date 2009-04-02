@@ -33,8 +33,8 @@
 %no deberian ser hechos.
 number_of_rows(3).
 number_of_columns(3).
-% largo_cancha(89).
-% ancho_cancha(71).
+% largo_cancha(83).
+% ancho_cancha(67).
 
 
 :- pred cell_with(-Width) :: int 
