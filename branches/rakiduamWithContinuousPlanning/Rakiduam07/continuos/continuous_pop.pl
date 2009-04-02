@@ -88,18 +88,18 @@ get_perceptions(Percepts):-
 %Par soccer_strips:
 initperlist:-
 	% % INITIAL SITUATION
-%        assertz_fact(perceptions([waiting_at(rob,field1),waiting_at(ball,field2)])),
-%        assertz_fact(perceptions([waiting_at(rob,field2),waiting_at(ball,field2)])),
-       assertz_fact(perceptions([waiting_at(rob,field5),waiting_at(ball,field2)])),
-       assertz_fact(perceptions([waiting_at(rob,field2),waiting_at(ball,field2)])),
-       assertz_fact(perceptions([waiting_at(rob,field5),waiting_at(ball,field2)])),
-       assertz_fact(perceptions([waiting_at(rob,field2),waiting_at(ball,field2)])),
-       assertz_fact(perceptions([waiting_at(rob,field2),carrying(rob,ball)])),
-       assertz_fact(perceptions([waiting_at(rob,field5),carrying(rob,ball)])),
-       assertz_fact(perceptions([waiting_at(rob,field7),carrying(rob,ball)])),
-       assertz_fact(perceptions([waiting_at(rob,field7),waiting_at(ball,field6)])),
-       assertz_fact(perceptions([waiting_at(rob,field6),waiting_at(ball,field6)])),
-       assertz_fact(perceptions([waiting_at(rob,field6),waiting_at(ball,oppGoal)])).
+%        assertz_fact(perceptions([waiting_at(kula,field1),waiting_at(ball,cell(2,2))])),
+%        assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(3,3)),waiting_at(ball,cell(2,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(2,3)),waiting_at(ball,cell(2,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),carrying(kula,ball)])),
+%       assertz_fact(perceptions([waiting_at(kula,cell(3,3)),carrying(kula,ball)])),
+       assertz_fact(perceptions([waiting_at(kula,cell(1,3)),carrying(kula,ball)])),
+       assertz_fact(perceptions([waiting_at(kula,cell(1,3)),waiting_at(ball,cell(1,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(1,2)),waiting_at(ball,cell(1,2))])),
+       assertz_fact(perceptions([waiting_at(kula,cell(1,2)),waiting_at(ball,oppGoal)])).
 
 
 
@@ -122,7 +122,7 @@ continuouspop(Plan,DB):-
 
 iniciar :-
 	%Percepts = [clear(table),handempty,on(a,table),on(e,table),on(b,e),on(d,b),on(c,d),on(f,table),on(g,table),clear(g),clear(f),clear(c),clear(a)],
-        Percepts = [waiting_at(rob,field5),waiting_at(ball,field2)],
+        Percepts = [waiting_at(kula,cell(3,3)),waiting_at(ball,cell(2,2))],
 	asserta_fact(perception(Percepts)).
 
 
@@ -163,15 +163,16 @@ agenda(plan(_,_,_,Agenda),Agenda).
 %goals([on(c,d),on(d,b)]).
 
 %goals for soccer
-goals([carrying(rob,ball)]).
+%goals([carrying(kula,ball)]).
 goals([waiting_at(ball,oppGoal)]).
 %goals([on(d,a)]).
 
 find_new_goals(Goals):-
-	retract_fact(goals(Goals)).
+	%retract_fact(goals(Goals)).
+	goals(Goals).
 
 %TODO
-find_depth_bound(7).
+find_depth_bound(6).
 
 %%
 
@@ -344,7 +345,7 @@ remove_unexec_links([Cl|Ls],Ag,N0,[Cl|NLs],NAg):-
 	remove_unexec_links(Ls,Ag,N0,NLs,NAg).
 
 
-%[sitting_at(rob,o109),sitting_at(parcel,lng)]
+%[sitting_at(kula,o109),sitting_at(parcel,lng)]
 % [sitting_at(k1,mail)]
 all_preconds_satisfied([]).
 all_preconds_satisfied([P|Ps]) :-
