@@ -59,8 +59,8 @@ assert_perceptions :-
 % 	# "Calcula la lista de percepciones y lo devuelve en el parámetro"
 get_perceptions(PList):-
 	jugadores_propios(J),
-	get_waiting_at_list(J,Wa),
 	get_carrying_ball(Cb),
+	get_waiting_at_list(J,Wa),
 	append(Wa,[Cb],PList).
 
 get_perceptions(Wa) :-
@@ -72,7 +72,7 @@ get_perceptions(Wa) :-
 get_carrying_ball(carrying(P,Ball)) :-
 	pelota_pred(Xb,Yb,_),
 	konstant(K),
-	jugador(robot(propio,Number,pos(Xr,Yr))),
+	jugador(robot(propio,Number,pos(Xr,Yr,_Z,_R))),
 	Xr>Xb-K,
 	Xr<Xb+K,
 	Yr>Yb-K,
@@ -80,14 +80,17 @@ get_carrying_ball(carrying(P,Ball)) :-
 	get_ball_name(Ball),
 	get_player(P,Number,propio).
 
+get_carrying_ball(waiting_at(ball,FieldCell)) :-
+	pelota_pred(Xb,Yb,_),
+	get_in_field_position(Xb,Yb,FieldCell).
+
 
 get_in_field_position(X,Y,cell(C1,R1)) :-
 	point_to_cell_position(X,Y,C1,R1).
 	
 
 get_waiting_at_list([],[]).
- 
-get_waiting_at_list([jugador(robot(propio,Number,pos(Xr,Yr)))|Tail],
+get_waiting_at_list([robot(propio,Number,pos(Xr,Yr,_Z,_R))|Tail],
 	[waiting_at(P,FieldCell)|L]) :-
 	get_player(P,Number,propio),
 	get_in_field_position(Xr,Yr,FieldCell),

@@ -122,6 +122,8 @@ comportamiento(Jugador,Iz,De):-
 
 punto(1060,1445).
 
+accion(quieto,robot(propio,_,_),0,0).
+
 accion(prueba1,robot(propio,_,pos(Xr,Yr,_Zr,_R)),0,0) :-
 %	Xa1 is Xr-300,
 %	Xa2 is Xr+300,
@@ -140,15 +142,15 @@ accion(prueba1,Robot,Iz,De) :-
 
 
 
-accion(prueba,R,125,-125) :-
-	jugador_prev(R).
+% accion(prueba,R,125,-125) :-
+% 	jugador_prev(R).
 
 
-accion(prueba,robot(propio,_,pos(Xr,Yr,_Zr,_R)),125,0) :-
-	Xa1 is Xr-150,
-	Xa2 is Xr+150,
-	Ya1 is Yr-150,
-	Ya2 is Yr+150,
+accion(prueba,robot(propio,_,pos(Xr,Yr,_Zr,_R)),125,-125) :-
+	Xa1 is Xr-5,
+	Xa2 is Xr+5,
+	Ya1 is Yr-5,
+	Ya2 is Yr+5,
         pelota_entre(Xa1,Ya1,Xa2,Ya2).
 
 

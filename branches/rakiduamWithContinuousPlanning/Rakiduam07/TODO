@@ -1,6 +1,26 @@
 Todo list:
 
 
+* Debuguear el siguiente error
+** TODO 388  7  Call: continuous_pop:remove_flaw(plan([act(2,kick(kula,ball,cell(1,2),oppGoal)),act(finish,end),act(start,init)],[start<finish,2<finish,start<2],[cl(start,carrying(kula,ball),2),cl(2,waiting_at(ball,oppGoal),finish)],[goal(waiting_at(kula,cell(1,2)),2)],[_4768\=_4769]),7,_35237,_35238) ? s
+Actions  [] where removed from the plan
+
+{ERROR: Memory allocation failed [in Realloc()]}
+{ Execution aborted }
+
+***    408  8  Call: pop:solve_open_preconditions(plan([act(2,kick(kula,ball,cell(1,2),oppGoal)),act(finish,end),act(start,init)],[start<finish,2<finish,start<2],[cl(start,carrying(kula,ball),2),cl(2,waiting_at(ball,oppGoal),finish)],[goal(waiting_at(kula,cell(1,2)),2)],[_4768\=_4769]),plan(_26449,_26450,_26451,_26452,[_4768\=_4769]),7) ? s
+{ERROR: Memory allocation failed [in Realloc()]}
+{ Execution aborted }
+
+
+** DONE Agregue predicado jugador en execute action para ver si anda ahora. Debug!!!
+** DONE 19  4  Call: actions:execute_action(move(kula,cell(3,3),cell(2,3)),_1051,_1052) ?
+{ERROR (/usr/local/bin/ciaosh-1.13, goal 1, thread b7dd86b0/-1210218832): illegal arithmetic expression}
+{ERROR (/usr/local/bin/ciaosh-1.13, goal 1, thread b7dd86b0/-1210218832): illegal arithmetic expression}
+   19  4  Fail:
+   actions:execute_action(move(kula,cell(3,3),cell(2,3)),_1051,_1052)
+   ? a
+
 * LPDoc en los nuevos predicados.
    Falta LPDoc en los predicados de los módulos configuration,
    video_parser, command_server.

@@ -21,7 +21,7 @@
 
 :- module(actions,[execute_action/3,insert_action_to_strategy/5],[assertions]).
 
-:-use_module(ambiente,[pelota_pred/3,cancha/4,largo_cancha/1,arco_propio/4,arco_contrario/4,robot_entre/5,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1]).
+:-use_module(ambiente,[pelota_pred/3,cancha/4,largo_cancha/1,arco_propio/4,arco_contrario/4,robot_entre/5,medio_cancha/2,alto_area/1,ancho_area/1,alto_area_chica/1,ancho_area_chica/1,jugador/1]).
 :-use_module(configuration,[get_player/3,get_ball_name/1]).
 :-use_module(navegacion,[ir_a_posicion/5,gira/5]).
 :-use_module(primitivas,[llevar_pelota_a_posicion/5]).
@@ -44,7 +44,8 @@ execute_action(noop,0,0).
 execute_action(move(P,_,cell(Col2,Row2)),Vi,Vd) :-
 	subfield_center(Col2,Row2,CoordX,CoordY),
 	get_player(P,Number,propio),
-	ir_a_posicion(robot(propio,Number,_),CoordX,CoordY,Vi,Vd).
+	jugador(robot(propio,Number,Pos)),
+	ir_a_posicion(robot(propio,Number,Pos),CoordX,CoordY,Vi,Vd).
 
 execute_action(grabBall(P,Obj,_),Vi,Vd) :-
 %	subfield_center(Pos, CoordX,CoordY),
