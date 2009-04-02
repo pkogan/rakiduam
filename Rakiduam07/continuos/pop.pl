@@ -90,6 +90,7 @@ set_inequality_constraints(plan(As,Os,Ls,Ag,_),NDIC,plan(As,Os,Ls,Ag,NDIC)).
 
 % select(G,[G|A],A).
 
+select(_,[],_).
 select(goal(G,GG),[goal(G,GG)|A],A) :-
    primitive(G),!.
 select(goal((X \= Y),GG),[goal((X\=Y),GG)|A],A) :- !.
@@ -344,5 +345,8 @@ writelnw([H|T]) :- write(H), writeln(T).
 % For soccer
 % solve([waiting_at(ball,oppGoal)],P,7), seq(P,S).
 % solve([waiting_at(kula,cell(3,1))],P,2), seq(P,S).
+
+% La siguiente consulta no esta andando:
+% solve([waiting_at(kula,cell(2,3))],P,2), seq(P,S).
 
 
