@@ -12,6 +12,17 @@ Actions  [] where removed from the plan
 {ERROR: Memory allocation failed [in Realloc()]}
 { Execution aborted }
 
+Me parece que se debe al caso que agregue de select cuando la agenda
+esta vacía.
+Habría que verificar que el siguiente predicado ande bien para cuando
+la agenda este vacía y devuelva el plan.
+
+solve_open_preconditions(Plan,Plan,_):-
+   agenda(Plan,[]),
+   inequality_constraints(Plan,DIC),
+   all_constraints_satisfied(DIC).
+
+
 
 ** DONE Agregue predicado jugador en execute action para ver si anda ahora. Debug!!!
 ** DONE 19  4  Call: actions:execute_action(move(kula,cell(3,3),cell(2,3)),_1051,_1052) ?
@@ -48,5 +59,6 @@ Actions  [] where removed from the plan
    pasan a ser estáticos durante la ejecución puesto que la
    configuracion se lee una vez al iniciar.
    Se podría sobrescribir el hecho asertado con set_fact.
+
 
 
