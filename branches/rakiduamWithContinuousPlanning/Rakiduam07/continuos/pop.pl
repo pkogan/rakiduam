@@ -57,9 +57,16 @@ solve_open_preconditions(CPlan,FPlan,DB) :-
    agenda(CPlan,Agenda),
    %inequality_constraints(CPlan,DIC0),
    select(Goal,Agenda,Agenda1),
-   set_new_agenda(CPlan,Agenda1,PlanAux),
-   solve_goal(Goal,PlanAux,NPlan,DB,NDB),
-   solve_open_preconditions(NPlan,FPlan,NDB).
+   ( 
+	Goal == nogoal ,
+	inequality_constraints(CPlan,DIC),
+	all_constraints_satisfied(DIC),
+	FPlan = CPlan
+   ;
+	set_new_agenda(CPlan,Agenda1,PlanAux),
+	solve_goal(Goal,PlanAux,NPlan,DB,NDB),
+	solve_open_preconditions(NPlan,FPlan,NDB)
+   ).
 
 
 pop(Plan,Plan,_):-
@@ -72,9 +79,16 @@ pop(CPlan,FPlan,DB) :-
    %inequality_constraints(CPlan,DIC0),
 
    select(Goal,Agenda,Agenda1),
-   set_new_agenda(CPlan,Agenda1,PlanAux),
-   solve_goal(Goal,PlanAux,NPlan,DB,NDB),
-   pop(NPlan,FPlan,NDB).
+   ( 
+	Goal == nogoal ,
+	inequality_constraints(CPlan,DIC),
+	all_constraints_satisfied(DIC),
+	FPlan = CPlan
+   ;
+	set_new_agenda(CPlan,Agenda1,PlanAux),
+	solve_goal(Goal,PlanAux,NPlan,DB,NDB),
+	pop(NPlan,FPlan,NDB)
+   ).
 
 agenda(plan(_,_,_,Agenda,_),Agenda).
 inequality_constraints(plan(_,_,_,_,DIC),DIC).
@@ -90,7 +104,7 @@ set_inequality_constraints(plan(As,Os,Ls,Ag,_),NDIC,plan(As,Os,Ls,Ag,NDIC)).
 
 % select(G,[G|A],A).
 
-select(_,[],_).
+select(nogoal,[],[]).
 select(goal(G,GG),[goal(G,GG)|A],A) :-
    primitive(G),!.
 select(goal((X \= Y),GG),[goal((X\=Y),GG)|A],A) :- !.
