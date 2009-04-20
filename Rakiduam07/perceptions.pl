@@ -18,7 +18,8 @@
     % along with this program.  If not, see <http://www.gnu.org/licenses/>. %
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-:- module(perceptions,[assert_perceptions/0,get_perceptions/1],[assertions]).
+%:- module(perceptions,[assert_perceptions/0,get_perceptions/1],[assertions]).
+:- module(perceptions,_,[assertions]).
 
 :- use_module(ambiente,[pelota_pred/3,jugadores_propios/1,jugador/1]).
 :- use_module(configuration,[get_player/3,get_ball_name/1]).
@@ -39,7 +40,7 @@
 
 
 
-konstant(10).
+konstant(3).
 
 % :- pred assert_perception 
 % 	# "Calcula la lista de percepciones y lo agrega a la base de conocimientos"
