@@ -2,8 +2,8 @@
 
 %:- use_module(delrob_strips,['<-'/2,achieves/2,preconditions/2,deletes/2,holds/2,primitive/1]).
 %:- use_module(blocks,['<-'/2,achieves/2,preconditions/2,deletes/2,primitive/1]).
-
-:- use_module(soccer_strips,['<-'/2,achieves/2,preconditions/2,deletes/2,primitive/1]).
+:- use_module('../field_grid',[neighbor/2]).
+:- use_module(soccer_strips,['<-'/2,'<<'/2,achieves/2,preconditions/2,deletes/2,primitive/1]).
 :- use_module(library(write),[numbervars/3,write/1]).
 :- use_module(library(when)).
 % Computational Intelligence: a logical approach. 
@@ -27,7 +27,7 @@
 %   instance indexes, and P is a proposition that is a precondition of 
 %   action A1 means that A0 is making P true for A1.
 
-:- op(1200,xfx,[<-]).
+:- op(1200,xfx,[<-,<<]).
 % N.B. we assume that conjunctions are represented as lists.
 % `\=' is the object level not equal.
 :- op(700,xfx, \=).
@@ -56,7 +56,7 @@ solve_open_preconditions(Plan,Plan,_):-
 solve_open_preconditions(CPlan,FPlan,DB) :-
    agenda(CPlan,Agenda),
    %inequality_constraints(CPlan,DIC0),
-   select(Goal,Agenda,Agenda1),
+   selectgoal(Goal,Agenda,Agenda1),
    ( 
 	Goal == nogoal ,
 	inequality_constraints(CPlan,DIC),
@@ -78,7 +78,7 @@ pop(CPlan,FPlan,DB) :-
    agenda(CPlan,Agenda),
    %inequality_constraints(CPlan,DIC0),
 
-   select(Goal,Agenda,Agenda1),
+   selectgoal(Goal,Agenda,Agenda1),
    ( 
 	Goal == nogoal ,
 	inequality_constraints(CPlan,DIC),
@@ -104,14 +104,27 @@ set_inequality_constraints(plan(As,Os,Ls,Ag,_),NDIC,plan(As,Os,Ls,Ag,NDIC)).
 
 % select(G,[G|A],A).
 
-select(nogoal,[],[]).
-select(goal(G,GG),[goal(G,GG)|A],A) :-
+selectgoal(nogoal,[],[]).
+selectgoal(goal(G,GG),[goal(G,GG)|A],A) :-
    primitive(G),!.
-select(goal((X \= Y),GG),[goal((X\=Y),GG)|A],A) :- !.
-select(P,[goal(G,GG)|R],A) :-
+selectgoal(goal((X \= Y),GG),[goal((X\=Y),GG)|A],A) :- !.
+
+selectgoal(P,[goal(G,_GG)|R],A) :-
+   (G << B),
+   verifystatic(B),
+   selectgoal(P,R,A).
+
+selectgoal(P,[goal(G,GG)|R],A) :-
    (G <- B),
    makeintogoal(B,GG,R,NR),
-   select(P,NR,A).
+   selectgoal(P,NR,A).
+
+verifystatic([]). 
+verifystatic([H|T]) :-
+	H,
+	verifystatic(T).
+	
+
 
 makeintogoal([],_,R,R).
 makeintogoal([H|T],GG,R,[goal(H,GG)|NR]) :-
