@@ -23,7 +23,7 @@
 
 :- use_module(ambiente,[pelota_pred/3,jugadores_propios/1,jugador/1]).
 :- use_module(configuration,[get_player/3,get_ball_name/1]).
-:- use_module(field_grid,[subfield_center/4,point_to_cell_position/4]).
+:- use_module(field_grid,[subfield_center/4,point_to_cell_position/3]).
 :- use_module(library(lists)).
 
 :- data [perceptions/1].
@@ -86,8 +86,8 @@ get_carrying_ball(waiting_at(ball,FieldCell)) :-
 	get_in_field_position(Xb,Yb,FieldCell).
 
 
-get_in_field_position(X,Y,cell(C1,R1)) :-
-	point_to_cell_position(X,Y,C1,R1).
+get_in_field_position(X,Y,Cell) :-
+	point_to_cell_position(X,Y,Cell).
 	
 
 get_waiting_at_list([],[]).

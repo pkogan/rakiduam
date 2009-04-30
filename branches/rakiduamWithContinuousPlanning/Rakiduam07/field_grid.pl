@@ -16,9 +16,10 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-:-module(field_grid,[subfield_center/4,point_to_cell_position/4],[assertions]).
-%:-use_module(configuration).
-:-use_module(ambiente,[largo_cancha/1,ancho_cancha/1]).
+%:-module(field_grid,_,[assertions]).
+:-module(field_grid,[subfield_center/4,point_to_cell_position/3,neighbor/2],[assertions,fd]).
+:-use_module(configuration,[get_field/4]).
+:-use_module(ambiente,[largo_cancha/1,ancho_cancha/1,arco_contrario/4]).
 
 :- comment(title, "Field grid module ").
 
@@ -31,10 +32,10 @@
 	para filas y columnas son números enteros que comienzan en 1").
 
 %no deberian ser hechos.
-number_of_rows(3).
-number_of_columns(3).
-% largo_cancha(83).
-% ancho_cancha(67).
+number_of_rows(23).
+number_of_columns(28).
+%largo_cancha(84.78819999999999).
+%ancho_cancha(70.6).
 
 
 :- pred cell_with(-Width) :: int 
@@ -73,8 +74,117 @@ subfield_center(Column,Row,X,Y):-
 
 
 %dadas dos coordenada X e Y, calcula en que subcampo se encuentra dicho punto.
-point_to_cell_position(X,Y,Column,Row) :-
+% TODO hacer que oppGoal y ownGoal, sean relativos al equipo elegido.
+%      Ahora asume que oppGoal es el arco bajo, y ownGoal es el arco alto.
+point_to_cell_position(X,_,oppGoal) :-
+	relative_value_of_X(X,0).
+
+point_to_cell_position(X,_,ownGoal) :-
+	relative_value_of_X(X,Xr),
+	largo_cancha(Lc),
+	Xr >= Lc.
+
+point_to_cell_position(X,Y,cell(Column,Row)) :-
 	cell_height(Ch),
-	Row is (Y//Ch) + 1,
+	relative_value_of_Y(Y,Yr),
+	Row is (Yr//Ch) + 1,
 	cell_width(Cw),
-	Column is X//Cw + 1.
+	relative_value_of_X(X,Xr),
+	Column is Xr//Cw + 1.
+
+
+%devuelve el valor relativo de X, dentro de los limites de la cancha
+relative_value_of_X(Xaxe,Xrel) :-
+	get_field(X1f,_,X2f,_),
+	Xaxe > X1f,
+	Xaxe < X2f,
+	Xrel is Xaxe-X1f.
+
+relative_value_of_X(Xaxe,0) :-
+	get_field(X1f,_,_X2f,_),
+	Xaxe =< X1f.
+
+relative_value_of_X(Xaxe,Lc) :-
+	get_field(_X1f,_,X2f,_),
+	Xaxe >= X2f,
+	largo_cancha(Lc).
+
+%devuelve el valor relativo de Y, dentro de los limites de la cancha
+relative_value_of_Y(Yaxe,Yrel) :-
+	get_field(_,Y1f,_,Y2f),
+	Yaxe > Y1f,
+	Yaxe < Y2f,
+	Yrel is Yaxe-Y1f.
+
+relative_value_of_Y(Yaxe,0) :-
+	get_field(_,Y1f,_,_Y2f),
+	Yaxe =< Y1f.
+
+relative_value_of_Y(Yaxe,Ac) :-
+	get_field(_,_Y1f,_,Y2f),
+	Yaxe >= Y2f,
+	ancho_cancha(Ac).
+
+
+inrange(C,R) :-
+	inrange_columns(C),
+	inrange_rows(R).
+
+inrange_columns(C):-
+	number_of_columns(Cn),
+	C in 1 .. Cn.
+
+inrange_rows(R) :-
+	number_of_rows(Rn),
+	R in 1 .. Rn.
+
+neighbor1(cell(C,R1),cell(C,R2)) :- 
+	inrange(C,R1),
+	R2 .=. R1-1, 
+	R2 .>=. 1.
+
+neighbor(cell(C,R1),cell(C,R2)) :- 
+	inrange(C,R1),
+	R2 .=. R1+1, 
+	inrange_rows(R2).
+
+%Case 2: the same Row
+neighbor(cell(C1,R),cell(C2,R)) :- 
+	inrange(C1,R),
+	C2 .=. C1-1, C2 >= 1.
+
+neighbor(cell(C1,R),cell(C2,R)) :- 
+	inrange(C1,R),
+	C2 .=. C1+1, 
+	inrange_columns(C2).
+
+%Case 3: (+,+)
+neighbor(cell(C1,R1),cell(C2,R2)) :- 
+	inrange(C1,R1),
+	inrange(C2,R2),
+	R2 .=. R1+1, 
+	C2 .=. C1+1. 
+	
+
+%Case 4: (+,-)
+neighbor(cell(C1,R1),cell(C2,R2)) :- 
+	inrange(C1,R1),
+	inrange(C2,R2),
+	R2 .=. R1+1, 
+	C2 .=. C1-1.
+
+%Case 5: (-,+)
+neighbor(cell(C1,R1),cell(C2,R2)) :- 
+	inrange(C1,R1),
+	inrange(C2,R2),
+	R2 .=. R1-1, 
+	C2 .=. C1+1.
+
+%Case 6: (-,-)
+neighbor(cell(C1,R1),cell(C2,R2)) :- 
+	inrange(C1,R1),
+	inrange(C2,R2),
+	R2 .=. R1-1, 
+	C2 .=. C1-1.
+
+

@@ -1,6 +1,6 @@
-:- module(soccer_strips,['<-'/2,achieves/2,preconditions/2,deletes/2,holds/2,primitive/1],[]).
+:- module(soccer_strips,['<-'/2,'<<'/2,achieves/2,preconditions/2,deletes/2,holds/2,primitive/1],[]).
 
-:- op(1200,xfx,[<-]).
+:- op(1200,xfx,[<-,<<]).
 :- data holds/2.
 
 
@@ -8,7 +8,8 @@
 % ACTIONS
 % move(Ag,Pos,Pos_1) is the action of Ag moving from Pos to Pos_1
 preconditions(move(Ag,Pos,Pos_1),
-    [player(Ag), waiting_at(Ag,Pos), adjacent(Pos,Pos_1)]).
+    [player(Ag), waiting_at(Ag,Pos), valid_move(Pos,Pos_1)]).
+%     [player(Ag), waiting_at(Ag,Pos)]).
 
 %una posible mejora es hacer waiting para Ag, y ball_at para Obj
 %hacer que kick patee a otra posicion.
@@ -39,9 +40,58 @@ deletes(grabBall(_Ag,Obj,Pos), waiting_at(Obj,Pos)).
 deletes(kick(Ag,Obj,_From,_To),carrying(Ag,Obj)).
 
 
+ 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%                           Time and Relations					  %
+% • It helps to distinguish between two basic types of relations:		  %
+%    - Static relations: truth value does not depend on time			  %
+%    - Dynamic relations: truth values depends on time				  %
+% • Dynamic relations can be further classified as:				  %
+%    - Primitive relations: truth value can be determined by considering its	  %
+%       value in the past and what actions have been performed			  %
+%    - Derived relations: truth value can be derived from other relations	  %
+% • Why is it useful to distinguish?						  %
+%    - Static always the same: no need to recompute them at each time point	  %
+%    - Derived need to be re-derived at each time point (usually from primitives) %
+%    - Only need to reason about how the primitive relations change over time	  %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 % PRIMITIVE RELATIONS
 primitive(carrying(_,_)).
 primitive(waiting_at(_,_)).
+
+% STATIC RELATIONS
+
+%static(player(kula)).
+
+player(kula) << [].
+
+
+% %Neighbor
+% %Case 1: the same column
+% neighbor(cell(C,R1),cell(C,R2)) << [R2 is R1-1].
+% neighbor(cell(C,R1),cell(C,R2)) << [R2 is R1+1].
+% %Case 2: the same Row
+% neighbor(cell(C1,R),cell(C2,R)) << [C2 is C1-1].
+% neighbor(cell(C1,R),cell(C2,R)) << [C2 is C1+1].
+% %Case 3: (+,+)
+% neighbor(cell(C1,R1),cell(C2,R2)) << [R2 is R1+1, C2 is C1+1].
+% %Case 4: (+,-)
+% neighbor(cell(C1,R1),cell(C2,R2)) << [R2 is R1+1, C2 is C1-1].
+% %Case 5: (-,+)
+% neighbor(cell(C1,R1),cell(C2,R2)) << [R2 is R1-1, C2 is C1+1].
+% %Case 6: (-,-)
+% neighbor(cell(C1,R1),cell(C2,R2)) << [R2 is R1-1, C2 is C1-1].
+
+inReach(cell(1,_),oppGoal) << [].
+inReach(cell(2,_),oppGoal) << [].
+inReach(cell(3,_),oppGoal) << [].
+inReach(cell(4,_),oppGoal) << [].
+inReach(cell(5,_),oppGoal) << [].
+%inReach(cell(C1,R1),cell(C2,R2)) << [DifC is abs(C1-C2), DifC < 5, DifR is abs(R1-R2), DifR < 5].
+
+valid_move(cell(C1,R1),cell(C2,R2)) << [neighbor(cell(C1,R1),cell(C2,R2))].
 
 % DERIVED RELATIONS
 
@@ -70,7 +120,6 @@ at(Obj,Pos) <-
 % |         |         |         |
 % |         |         |         |
 % +---------+---------+---------+
-
 
 
 % adjacent(cell(C,R1),cell(C,R2)) <- [1 is abs(R1-R2)].
@@ -137,12 +186,10 @@ adjacent(cell(3,3),cell(2,3)) <- [].
 % adjacent(field8,field6) <- [].
 % adjacent(field8,field7) <- [].
 
-player(kula) <- [].
 
 % inReach(cell(2,_),cell(3,_)) <- [].
 % inReach(cell(2,_),cell(1,_)) <- [].
 % inReach(cell(3,_),cell(2,_)) <- [].
-inReach(cell(1,_),oppGoal) <- [].
 
 
 % inReach(field5,field6) <- [].
