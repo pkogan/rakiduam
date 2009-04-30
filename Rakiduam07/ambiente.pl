@@ -77,7 +77,6 @@ iniciar_ambiente(azul):-
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
 	assert_actions_prev_prom(N).
-%	assert_perceptions.
 
 
 iniciar_ambiente(amarillo):-
@@ -99,7 +98,6 @@ iniciar_ambiente(amarillo):-
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
 	assert_actions_prev_prom(N).
-%	assert_perceptions.
 
 
 iniciar_ambiente(_):-
@@ -122,7 +120,6 @@ iniciar_ambiente(_):-
 	asserta_fact(alto_area_chica(ALAC)),
 	get_numplayers(N),
 	assert_actions_prev_prom(N).
-%	assert_perceptions.
 
 
 
