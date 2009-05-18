@@ -16,7 +16,7 @@
 %     You should have received a copy of the GNU General Public License
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%:-module(field_grid,_,[assertions]).
+%:-module(field_grid,_,[assertions,fd]).
 :-module(field_grid,[subfield_center/4,point_to_cell_position/3,neighbor/2],[assertions,fd]).
 :-use_module(configuration,[get_field/4]).
 :-use_module(ambiente,[largo_cancha/1,ancho_cancha/1,arco_contrario/4]).
@@ -138,10 +138,11 @@ inrange_rows(R) :-
 	number_of_rows(Rn),
 	R in 1 .. Rn.
 
-neighbor1(cell(C,R1),cell(C,R2)) :- 
-	inrange(C,R1),
-	R2 .=. R1-1, 
-	R2 .>=. 1.
+neighbor(cell(C,R1),cell(C,R2)) :- 
+ 	inrange(C,R1),
+ 	R2 .=. R1-1, 
+	inrange_rows(R2).
+ 	%R2 .>=. 1.
 
 neighbor(cell(C,R1),cell(C,R2)) :- 
 	inrange(C,R1),
@@ -151,7 +152,9 @@ neighbor(cell(C,R1),cell(C,R2)) :-
 %Case 2: the same Row
 neighbor(cell(C1,R),cell(C2,R)) :- 
 	inrange(C1,R),
-	C2 .=. C1-1, C2 >= 1.
+	C2 .=. C1-1, 
+	inrange_columns(C2).
+%	C2 >= 1.
 
 neighbor(cell(C1,R),cell(C2,R)) :- 
 	inrange(C1,R),
@@ -187,4 +190,12 @@ neighbor(cell(C1,R1),cell(C2,R2)) :-
 	R2 .=. R1-1, 
 	C2 .=. C1-1.
 
+
+distance_between(Cell1,Cell2,1) :-
+	neighbor(Cell1,Cell2).
+
+distance_between(Cell1,Cell2,Distance) :-
+	neighbor(Cell1,Aux),
+	distance_between(Aux,Cell2,DistanceAux),
+	Distance is DistanceAux+1.
 

@@ -1,5 +1,4 @@
 :- module(pop,[solve/3,seq/2,solve_open_preconditions/3,add_these_preconds/4],[]).
-
 %:- use_module(delrob_strips,['<-'/2,achieves/2,preconditions/2,deletes/2,holds/2,primitive/1]).
 %:- use_module(blocks,['<-'/2,achieves/2,preconditions/2,deletes/2,primitive/1]).
 :- use_module('../field_grid',[neighbor/2]).

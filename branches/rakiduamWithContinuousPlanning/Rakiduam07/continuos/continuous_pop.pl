@@ -1,12 +1,11 @@
-:- module(continuous_pop,_).
-%:- module(continuous_pop,[initialplan/1,continuouspop/2,perception/1,action/1,find_depth_bound/1]).
+%:- module(continuous_pop,_).
+:- module(continuous_pop,[initialplan/2,continuouspop/2,perception/1,action/1,current_perceptions/1]).
 :- use_module(pop,[solve/3,seq/2,solve_open_preconditions/3, add_these_preconds/4]).
+:- use_module(goalgen,[find_new_goals/1,find_depth_bound/1]).
 :- use_module(library(write)).
 :- use_module(library(lists)).
-%:- use_module(blocks,[achieves/2,preconditions/2,deletes/2,holds/2]).
-:- use_module(soccer_strips,[achieves/2,preconditions/2,deletes/2,holds/2,'<-'/2]).
+:- use_module(soccer_strips,[achieves/2,preconditions/2,deletes/2,holds/2,'<-'/2,'<<'/2]).
 :- use_module(library(concurrency)).
-% :- use_module(delrob_strips,['<-'/2,achieves/2,preconditions/2,deletes/2,holds/2,primitive/1]).
 
 
 
@@ -25,19 +24,19 @@
 % A causal link is of the form cl(A0,P,A1) where A0 and A1 are action 
 %   instance indexes, and P is a proposition that is a precondition of 
 %   action A1 means that A0 is making P true for A1.
-:- op(1200,xfx,[<-]).
+:- op(1200,xfx,[<-,<<]).
 
 :- concurrent perception/1.
 :- concurrent action/1.
-:- data [perceptions/1,goals/1].
+:- data [perceptions/1, current_perceptions/1].
 
 action(noop).
 
 main:- 
 	initlog('./cpop.log'),
 	initperlist,
-	initialplan(Plan),
-	find_depth_bound(DB),
+	initialplan(Plan,DB),
+%	find_depth_bound(DB),
 	eng_call(controlador,create,create),
 	eng_call(continuouspop(Plan,DB),create,create).
 
@@ -46,8 +45,9 @@ initlog(NombreArchivo):-
 	set_output(Stream).
 
 
-initialplan(Plan):-
+initialplan(Plan,DB):-
 	find_new_goals(Goals),
+	display('la meta es : '), display(Goals), nl,
 	find_depth_bound(DB),
 	solve(Goals,Plan,DB).
 
@@ -86,38 +86,56 @@ get_perceptions(Percepts):-
 %         assertz_fact(perceptions([clear(table),on(a,table),on(e,table),on(b,e),on(d,b),on(c,d),on(f,table),on(g,table),clear(g),clear(f),clear(c),clear(a)])).
 
 %Par soccer_strips:
+
 initperlist:-
 	% % INITIAL SITUATION
 %        assertz_fact(perceptions([waiting_at(kula,field1),waiting_at(ball,cell(2,2))])),
 %        assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(3,3)),waiting_at(ball,cell(2,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(2,3)),waiting_at(ball,cell(2,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),waiting_at(ball,cell(2,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(2,2)),carrying(kula,ball)])),
-%       assertz_fact(perceptions([waiting_at(kula,cell(3,3)),carrying(kula,ball)])),
-       assertz_fact(perceptions([waiting_at(kula,cell(1,3)),carrying(kula,ball)])),
-       assertz_fact(perceptions([waiting_at(kula,cell(1,3)),waiting_at(ball,cell(1,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(1,2)),waiting_at(ball,cell(1,2))])),
-       assertz_fact(perceptions([waiting_at(kula,cell(1,2)),waiting_at(ball,oppGoal)])).
+%       assertz_fact(perceptions([waiting_at(kiñe,cell(3,2)),waiting_at(epu,cell(3,1)),waiting_at(kula,cell(2,2)),waiting_at(meli,cell(2,1)),waiting_at(kechu,cell(2,3)),waiting_at(ball,cell(2,2))])),
+	assertz_fact(perceptions([waiting_at(kula,cell(25,19)),waiting_at(ball,cell(15,12))])),
+	assertz_fact(perceptions([waiting_at(kula,cell(25,18)),waiting_at(ball,cell(15,12))])),
+	assertz_fact(perceptions([waiting_at(kula,cell(25,18)),waiting_at(ball,cell(15,12))])).
+
+%	assertz_fact(perceptions([waiting_at(kiñe,cell(28,12)),waiting_at(epu,cell(26,6)),waiting_at(kula,cell(25,19)),waiting_at(meli,cell(19,6)),waiting_at(kechu,cell(19,19)),waiting_at(ball,cell(15,12))])),
+%	assertz_fact(perceptions([waiting_at(kiñe,cell(28,12)),waiting_at(epu,cell(26,6)),waiting_at(kula,cell(25,19)),waiting_at(meli,cell(19,6)),waiting_at(kechu,cell(19,19)),waiting_at(ball,cell(15,12))])).
+%        assertz_fact(perceptions([waiting_at(kiñe,cell(3,2)),waiting_at(epu,cell(3,1)),waiting_at(kula,cell(2,2)),waiting_at(meli,cell(2,1)),waiting_at(kechu,cell(2,3)),waiting_at(ball,cell(2,2))])),
+%        assertz_fact(perceptions([waiting_at(kiñe,cell(3,2)),waiting_at(epu,cell(3,1)),waiting_at(kula,cell(2,2)),waiting_at(meli,cell(2,1)),waiting_at(kechu,cell(2,3)),waiting_at(ball,cell(1,2))])),
+%        assertz_fact(perceptions([waiting_at(kiñe,cell(3,2)),waiting_at(epu,cell(3,1)),waiting_at(kula,cell(2,2)),waiting_at(meli,cell(2,1)),waiting_at(kechu,cell(2,3)),waiting_at(ball,cell(1,2))])).
 
 
 
 
 
 continuouspop(Plan,DB):-
-	current_output(S),
-        write(S,'######## new cicle ###### \n'),
-	retract_fact(perception(Percepts)), % acordate que es perception sin s s s s s
-	writeln(['>>> Current perceptions: ', Percepts,' <<<']),
-	update_effects(Percepts),
+% 	current_output(S),
+%         write(S,'######## new cicle ###### \n'),
+	display('++++ esperando percepciones : '),nl,
+	retract_fact(perception(Percepts)),
+	set_fact(current_perceptions(Percepts)),
+	display('++++ obtiene percepciones : OK'),nl,
+% 	writeln(['>>> Current perceptions: ', Percepts,' <<<']),
+	update_effects(Percepts),!,
 	remove_flaw(Plan,DB,NewPlan,Act),
 %	solve_open_preconditions(Plan2,Plan3,DB),
 %	unexecuted_action(Plan3,NewPlan,Act),
 %	exect_if_pos(Plan2,Plan3),
+	display('P |> asserta accion : '),display(Act),
 	asserta_fact(action(Act)),
+	display('OK'),nl,
 	!,
 	continuouspop(NewPlan,DB).
+
+% Si el plan falla, asserto accion noop,
+% actualizo las percepciones y trato de buscar
+% un nuevo plan con nuevas metas.
+continuouspop(_Plan,DB):-
+	asserta_fact(action(noop)),
+	retract_fact(perception(Percepts)), 
+	update_effects(Percepts),
+	initialplan(NewPlan,DB),
+	!,
+	continuouspop(NewPlan,DB).
+
 
 
 iniciar :-
@@ -138,14 +156,14 @@ trycpop :-
 	initperlist,
 	get_perceptions(P1),assertz_fact(perception(P1)),
 	get_perceptions(P2),assertz_fact(perception(P2)),
-	get_perceptions(P3),assertz_fact(perception(P3)),
-	get_perceptions(P4),assertz_fact(perception(P4)),
-	get_perceptions(P5),assertz_fact(perception(P5)),
-	get_perceptions(P6),assertz_fact(perception(P6)),
+%	get_perceptions(P3),assertz_fact(perception(P3)),
+% 	get_perceptions(P4),assertz_fact(perception(P4)),
+% 	get_perceptions(P5),assertz_fact(perception(P5)),
+% 	get_perceptions(P6),assertz_fact(perception(P6)),
 	update_effects(P1),
 	retract_fact(perception(P1)),
-	initialplan(Plan),
-	continuouspop(Plan,7).
+	initialplan(Plan,DB),
+	continuouspop(Plan,DB).
 
 
 % exect_if_pos(_Plan2,_Plan3):-
@@ -157,23 +175,6 @@ trycpop :-
 agenda(plan(_,_,_,Agenda),Agenda).
 
 
-
-%TODO find_new_goals, find_depth_bound
-%goals for blocks
-%goals([on(c,d),on(d,b)]).
-
-%goals for soccer
-%goals([carrying(kula,ball)]).
-goals([waiting_at(ball,oppGoal)]).
-%goals([on(d,a)]).
-
-find_new_goals(Goals):-
-	%retract_fact(goals(Goals)).
-	goals(Goals).
-
-%TODO
-find_depth_bound(6).
-
 %%
 
 remove_flaw(plan(As,Os,Ls,Ag,DIC),DB,NewPlan,Act) :-
@@ -183,7 +184,12 @@ remove_flaw(plan(As,Os,Ls,Ag,DIC),DB,NewPlan,Act) :-
 	unexecuted_action(plan(A2s,O2s,L3s,Ag3,DIC),Plan3,Act),
 	remove_historical_goals(Plan3,NewPlan).
 
-
+%si falla el plan, busco un plan inicial nuevamente.
+% remove_flaw(_,_,NewPlan,noop) :-
+% %	find_depth_bound(DB),
+% %alternativa : assetar la accion noop, obtener nuevas percepciones, update effects, initial plan
+% 	initialplan(NewPlan).
+	
 
 add_new_goals(Goals,Agenda1,Agenda) :-
    %agrega las metas como precondiciones de finish
@@ -208,7 +214,7 @@ remove_unsupported_links([],[],Ag,Ag).
 
 remove_unsupported_links([cl(start,Precond,Action)|Cls],NewCL,Ag,Ag1) :-
 	\+ holds(Precond,init),!,
-        writeln(['Remove unsupported links: cl(start,',Precond,',',Action,')']),
+%        writeln(['Remove unsupported links: cl(start,',Precond,',',Action,')']),
 	remove_unsupported_links(Cls,NewCL,[goal(Precond,Action)|Ag],Ag1).
 	%remover este link de la lista.
 
@@ -235,7 +241,7 @@ remove_unsupported_links([Cl|Cls],[Cl|RestCL],Ag,Ag1) :-
 remove_redundant_actions(plan(As,Os,L1s,Ag1,DIC),plan(A1s,O1s,L3s,Ag2,DIC)):-
 	extend_causal_links(L1s,L2s),
 	remove_red_act(As,L2s,A1s,[],Removed),
-	writeln(['Actions  ', Removed,' where removed from the plan']),
+%	writeln(['Actions  ', Removed,' where removed from the plan']),
 	remove_open_precond(Ag1,Removed,Ag2),
         remove_cl_mising_act(L2s,Removed,L3s),
 	remove_constr(Os,Removed,O1s).
@@ -281,7 +287,7 @@ extend_causal_links([],[]).
 extend_causal_links([cl(Act1,Precond,Act2)|Ls],[cl(start,Precond,Act2)|NLs]):-
 	Act1 \== start,
 	holds(Precond,init),!,
-        writeln(['Extend causal link: cl(',Act1,',',Precond,',',Act2,')',' to ','cl(start,',Precond,',',Act2,')',nl]),
+%        writeln(['Extend causal link: cl(',Act1,',',Precond,',',Act2,')',' to ','cl(start,',Precond,',',Act2,')',nl]),
 	extend_causal_links(Ls,NLs).
 extend_causal_links([Cl|Ls],[Cl|NLs]):-
 	extend_causal_links(Ls,NLs).
@@ -323,7 +329,7 @@ unexecuted_action(plan(As,Os,Ls,Agenda,DIC),plan(NAs,NOs,NLs,NAgenda,DIC), Act0)
 	preconditions(Act0,Preconds),
 	all_preconds_satisfied(Preconds),
 	\+ (member(A<N0,Os),A \== start),
-	writeln(['**** Action ', Act0, ' is ready for execution ****']),
+%	writeln(['**** Action ', Act0, ' is ready for execution ****']),
 	delete_action(As,Ls,Os,Agenda,act(N0,Act0),NAs,NLs,NOs,NAgenda).
 
 unexecuted_action(P,P, noop).
@@ -352,6 +358,11 @@ all_preconds_satisfied([P|Ps]) :-
    (P <- B),
    all_preconds_satisfied(B),
    all_preconds_satisfied(Ps).
+
+all_preconds_satisfied([P|Ps]) :-
+   (P << B),
+   all_preconds_satisfied(B),
+   all_preconds_satisfied(Ps).
 	
 all_preconds_satisfied([P|Ps]) :-
 	achieves(init,P),
@@ -362,4 +373,4 @@ all_preconds_satisfied([P|Ps]) :-
 writeln(L) :- \+ \+ (numbervars(L,0,_), writelnw(L) ).
 writelnw([]) :- nl.
 writelnw([nl|T]) :- !,nl, writeln(T).
-writelnw([H|T]) :- current_output(S),write(S,H), writeln(T).
+writelnw([H|T]) :- display(H), writeln(T).
