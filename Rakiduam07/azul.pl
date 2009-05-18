@@ -17,6 +17,7 @@
 %     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 :- module(azul, [main/0], [assertions]).
+
 %% modulo azul
 %% módulo principal de la estrategia del equipo azul
 :- use_module(library(concurrency)).
@@ -36,9 +37,8 @@
 
 :- use_module(actions,[execute_action/3,insert_action_to_strategy/5]).
 
-:- use_module('continuos/continuous_pop',[initialplan/1,continuouspop/2,perception/1,action/1,find_depth_bound/1]).
-
-
+:- use_module('continuos/continuous_pop',[initialplan/1,continuouspop/2,perception/1,action/1]).
+:- use_module('continuos/goalgen',[find_depth_bound/1]).
 :- comment(title, "Equipo de Futbol con Robots").
 
 :- comment(author, "Pablo Kogan").
@@ -78,7 +78,6 @@ juego(VideoServer,CommandServer):-
 %	ejecucion(VideoServer,CommandServer).
  	initialplan(Plan),
  	find_depth_bound(DB),
-	%eng_call(controlador,create,create),
 	eng_call(continuouspop(Plan,DB),create,create),
 	%aqui comienza el controlador
 	repeat,
@@ -97,31 +96,47 @@ juego(VideoServer,CommandServer):-
 	   %display(ListaVelocidades),
 	fail. 
 
-% ejecucion(VideoServer,CommandServer) :-
+
+
+% juego(VideoServer,CommandServer):-
+% 	iniciarLog('estrategia.log',Archivo), 
+% %	ejecucion(VideoServer,CommandServer).
+%  	initialplan(Plan),
+%  	find_depth_bound(DB),
+% 	%eng_call(controlador,create,create),
+% 	eng_call(continuouspop(Plan,DB),create,create),
+% 	%aqui comienza el controlador
+% 	repeat,
 % 	   recibirVS(VideoServer,Estado),
-% 	   (
-% 	    getPlannedAction(noop,_,_),
-% 	    estrategia(Estado,ListaVelocidades)
+% 	   estrategia(Estado,ListaVelocidadesAux),
+% 	   getPlannedAction(Action,Lv,Rv),
+% 	   (Action == noop,
+% 	    ListaVelocidadesAux = ListaVelocidades
 % 	   ;
-% 	    getPlannedAction(_,Lv,Rv),
-% 	    estrategia(Estado,ListaVelocidadesAux),
 % 	    get_planned_player(N),
 % 	    insert_action_to_strategy(Lv,Rv,N,ListaVelocidadesAux,ListaVelocidades)
 % 	   ),
 % %	   estrategia(Estado,ListaVelocidades),
-% %	   escribirLog(Archivo,Estado,ListaVelocidades),
+% 	   escribirLog(Archivo,Estado,ListaVelocidades),
 % 	   sendCS(CommandServer,ListaVelocidades),
-% 	   ejecucion(VideoServer,CommandServer).
+% 	   %display(ListaVelocidades),
+% 	fail. 
+
+
 
 
 get_planned_player(3).
 
 getPlannedAction(Act,Lv,Rv):- 
 	get_perceptions(Percepts),
-	assertz_fact(perception(Percepts)),
+	asserta_fact(perception(Percepts)),
+	display('Controlador asserta : '),display(Percepts),nl,
+	display('Controlador ESPERANDO ACCION : OPEN'),nl,
 	retract_fact(action(Act)),
-	execute_action(Act,Lv,Rv),
-	display(Act), nl,!.
+	display('Controlador ESPERANDO ACCION : CLOSE'),nl,
+        %retract_fact_nb(action(Act)),
+	execute_action(Act,Lv,Rv),!.
+%	display(Act), nl,!.
 
 %getPlannedAction(noop,0,0).
 
