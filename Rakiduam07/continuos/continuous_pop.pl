@@ -1,5 +1,5 @@
-%:- module(continuous_pop,_).
-:- module(continuous_pop,[initialplan/2,continuouspop/2,perception/1,action/1,current_perceptions/1]).
+:- module(continuous_pop,_).
+%:- module(continuous_pop,[initialplan/2,continuouspop/2,perception/1,action/1,current_perceptions/1]).
 :- use_module(pop,[solve/3,seq/2,solve_open_preconditions/3, add_these_preconds/4]).
 :- use_module(goalgen,[find_new_goals/1,find_depth_bound/1]).
 :- use_module(library(write)).
@@ -156,7 +156,7 @@ trycpop :-
 	initperlist,
 	get_perceptions(P1),assertz_fact(perception(P1)),
 	get_perceptions(P2),assertz_fact(perception(P2)),
-%	get_perceptions(P3),assertz_fact(perception(P3)),
+	get_perceptions(P3),assertz_fact(perception(P3)),
 % 	get_perceptions(P4),assertz_fact(perception(P4)),
 % 	get_perceptions(P5),assertz_fact(perception(P5)),
 % 	get_perceptions(P6),assertz_fact(perception(P6)),
@@ -243,7 +243,7 @@ remove_redundant_actions(plan(As,Os,L1s,Ag1,DIC),plan(A1s,O1s,L3s,Ag2,DIC)):-
 	remove_red_act(As,L2s,A1s,[],Removed),
 %	writeln(['Actions  ', Removed,' where removed from the plan']),
 	remove_open_precond(Ag1,Removed,Ag2),
-        remove_cl_mising_act(L2s,Removed,L3s),
+        remove_cl_missing_act(L2s,Removed,L3s),
 	remove_constr(Os,Removed,O1s).
 
 remove_constr([],_,[]).
@@ -266,17 +266,23 @@ remove_open_precond([goal(P,NA)|Ag],Rem,[goal(P,NA)|Ag2]):-
 	remove_open_precond(Ag,Rem,Ag2).
 
 
-remove_cl_mising_act([],_,[]).
-remove_cl_mising_act([cl(_,_,Act)|L2s],Rem,L3s):-
+remove_cl_missing_act([],_,[]).
+remove_cl_missing_act([cl(_,_,Act)|L2s],Rem,L3s):-
 	member(Act,Rem),!,
-	remove_cl_mising_act(L2s,Rem,L3s).
-remove_cl_mising_act([cl(Act1,P,Act)|L2s],Rem,[cl(Act1,P,Act)|L3s]):-
-	remove_cl_mising_act(L2s,Rem,L3s).
+	remove_cl_missing_act(L2s,Rem,L3s).
+remove_cl_missing_act([cl(Act1,P,Act)|L2s],Rem,[cl(Act1,P,Act)|L3s]):-
+	remove_cl_missing_act(L2s,Rem,L3s).
 	
 	
 remove_red_act([],_,[],R,R).
+remove_red_act([act(start,init)|As],Ls,[act(start,init)|A1s],R,Removed):-
+	remove_red_act(As,Ls,A1s,R,Removed).
 remove_red_act([act(Act,A)|As],Ls,[act(Act,A)|A1s],R,Removed):-
-	(member(cl(Act,_,_),Ls);Act == finish) ,!,
+	(
+	    member(cl(Act,_,_),Ls)
+	;
+	    Act == finish
+	),!,
 	remove_red_act(As,Ls,A1s,R,Removed).
 remove_red_act([act(Act,_A)|As],Ls,A1s,R,Removed):-
 	remove_red_act(As,Ls,A1s,[Act|R],Removed).

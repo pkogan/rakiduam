@@ -60,7 +60,7 @@ solve_open_preconditions(CPlan,FPlan,DB) :-
 	Goal == nogoal ,
 	inequality_constraints(CPlan,DIC),
 	all_constraints_satisfied(DIC),
-	FPlan = CPlan
+	set_new_agenda(CPlan,Agenda1,FPlan)
    ;
 	set_new_agenda(CPlan,Agenda1,PlanAux),
 	solve_goal(Goal,PlanAux,NPlan,DB,NDB),
@@ -82,7 +82,7 @@ pop(CPlan,FPlan,DB) :-
 	Goal == nogoal ,
 	inequality_constraints(CPlan,DIC),
 	all_constraints_satisfied(DIC),
-	FPlan = CPlan
+	set_new_agenda(CPlan,Agenda1,FPlan)
    ;
 	set_new_agenda(CPlan,Agenda1,PlanAux),
 	solve_goal(Goal,PlanAux,NPlan,DB,NDB),
